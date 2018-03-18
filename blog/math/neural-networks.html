@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>神经网络</title>
+<!-- 2018-03-18 Sun 22:08 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Yang Tianping" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">神经网络</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. 模型</a>
+<ul>
+<li><a href="#sec-1-1">1.1. M-P神经元模型</a></li>
+<li><a href="#sec-1-2">1.2. 感知机</a></li>
+<li><a href="#sec-1-3">1.3. 多层神经网络</a></li>
+<li><a href="#sec-1-4">1.4. 多层感知机（MLP）</a></li>
+<li><a href="#sec-1-5">1.5. DNN</a></li>
+<li><a href="#sec-1-6">1.6. RNN</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1. 经典RNN</a></li>
+<li><a href="#sec-1-6-2">1.6.2. Bi-RNN</a></li>
+<li><a href="#sec-1-6-3">1.6.3. LSTM</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-7">1.7. CNN</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. 学习算法</a></li>
+<li><a href="#sec-3">3. 参考</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 模型</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> M-P神经元模型</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+典型的<a href="https://en.wikipedia.org/wiki/Artificial_neuron">M-P神经元模型</a> 的输出为：
+$$y=f(\sum_{i=1}^{n}{w_{i}x_{i}-\theta})$$
+其中\(\theta\)为阈值，\(x_i\)为第i个神经元的输入，\(w_i\)为第i个神经元的输入的权重。通常也会表示为\(z=\sum{w_{i}x_{i}+b}\)且\(y=\sigma{(z)}\)
+</p>
+
+<p>
+激活函数$f$可以通过\(\sum_{i=1}^{n}{w_{i}x_{i}}\)与阈值比较，如果大于阈值则输出1，否则输出0（或者-1）。理想的激活函数是<a href="https://en.wikipedia.org/wiki/Sign_function">阶跃函数</a> ，但是由于阶跃函数不连续且不光滑，因此实际上会用<a href="https://en.wikipedia.org/wiki/Sigmoid_function">sigmoid函数</a> 作为激活函数。
+</p>
+
+<p>
+多个神经元组合就得到了神经网络。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 感知机</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<a href="https://en.wikipedia.org/wiki/Perceptron">感知机</a> 由两层神经元组成，第一层神经元接收输入，输出神经元是M-P神经元，可实现与、或、非等运算，但是某些简单的操作却无法实现（比如异或）。
+</p>
+
+<p>
+感知机的学习过程（将\(\theta\)作为\({x_0}=-1\)的权重\(w_0\)）为：
+$$w_{i}\leftarrow{w_{i}+\triangle{w_i}}$$
+$$\triangle{w_i}=\eta(y-\hat{y})x_i$$
+其中\(\eta\in(0,1)\)为学习率。对于 <b>线性可分</b> 的问题，感知机的学习过程一定会收敛。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 多层神经网络</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+对于线性不可分的问题，则需要使用多层网络进行解决，即每层神经元与下层神经元完全连接，同层之间不存在连接，也没有跨层的连接，除开输入层与输出层的中间层为 <b>hidden layer</b> ，隐层与输出层包含功能神经元，输入层仅接收输入，典型的多层网络比如<a href="https://en.wikipedia.org/wiki/Feedforward_neural_network">多层前馈神经网络</a> 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 多层感知机（MLP）</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+多层感知机是一种多层前馈神经网络（数据从输入层进入，流经隐藏层，最后到达输出层），至少需要包含三层layers或者一层hidden layers，训练时使用<a href="https://en.wikipedia.org/wiki/Backpropagation">误差逆传播(Backpropagation)</a> 算法。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> DNN</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+DNN也是一种典型的前馈神经网络，单单从结构上来看，也可以理解成隐藏层数更多的MLP。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> RNN</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+<a href="https://en.wikipedia.org/wiki/Recurrent_neural_network">RNN</a> 即循环神经网络，对于训练样本是连续的序列，比如连续的语音、连续的文字等情况，难以直接切分成独立的样本进行训练的情况，RNN可以很好的解决。
+</p>
+</div>
+
+<div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 经典RNN</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+假设时间序列\(t\)从1到\(\tau\)，对于其中任意一个序列\(t\)，\(x^{(t)}\)为当前序列样本的输入，隐藏状态\(h^{(t)}\)由\(x^{(t)}\)和\(h^{(t-1)}\)共同决定：
+$$h^{(t)}=\sigma{(z^{(t)})}=\sigma{(Ux^{(t)}+Wh^{(t)}+b)}$$
+其中\(\sigma\)通常为sigmoid激活函数，对应的输出为：
+$$o^{(t)}=Vh^{(t)}+c$$
+最终在序列\(t\)的预测输出为：
+$$\hat{y}^{(t)}=\sigma{(o^{(t)})}$$
+而这里的激活函数一般为softmax。整个过程中的\(U,V,W,b\)在整个RNN网络中共享（相同）。
+</p>
+
+<p>
+如果将感知机比喻为二维平面，那么RNN则可以理解为三位平面，从三位平面的角度看（时间序列），相邻二维平面之间并非独立，而是有所关系。
+</p>
+</div>
+
+<ol class="org-ol"><li><a id="sec-1-6-1-1" name="sec-1-6-1-1"></a>N vs. N RNN<br  /><div class="outline-text-5" id="text-1-6-1-1">
+<p>
+这种RNN结构上要求输入序列与输出序列等长，因此比较适用领域较小，著名的Char RNN即属于此类，输入一个字符，计算下一个字符的概率。
+</p>
+
+<p>
+<a href="https://pic2.zhimg.com/80/v2-629abbab0d5cc871db396f17e9c58631_hd.jpg">图：NvN RNN</a>
+</p>
+</div>
+</li>
+
+<li><a id="sec-1-6-1-2" name="sec-1-6-1-2"></a>N vs. 1 RNN<br  /><div class="outline-text-5" id="text-1-6-1-2">
+<p>
+即输入是一个序列，但是输出是一个单独的值，这种结构通常可以用于序列分类问题（比如实体关系分类、情感倾向分析）。
+</p>
+
+<p>
+<a href="https://pic1.zhimg.com/80/v2-6caa75392fe47801e605d5e8f2d3a100_hd.jpg">图：Nv1 RNN</a>
+</p>
+</div>
+</li>
+
+<li><a id="sec-1-6-1-3" name="sec-1-6-1-3"></a>1 vs. N RNN<br  /><div class="outline-text-5" id="text-1-6-1-3">
+<p>
+从图像生成一段文字可以采取这种方式（或者对文章产生摘要？）。
+</p>
+
+<p>
+<a href="https://pic1.zhimg.com/80/v2-87ebd6a82e32e81657682ffa0ba084ee_hd.jpg">图：1vN RNN</a>
+</p>
+
+<p>
+<a href="https://pic1.zhimg.com/80/v2-fe054c488bb3a9fbcdfad299b2294266_hd.jpg">图：1vN RNN的另一种方式</a>
+</p>
+</div>
+</li>
+
+<li><a id="sec-1-6-1-4" name="sec-1-6-1-4"></a>N vs. M RNN<br  /><div class="outline-text-5" id="text-1-6-1-4">
+<p>
+通常又叫Encoder-Decoder模型，也叫Seq2Seq模型。这种情况即输入序列长度与输出序列长度不等长，最常见的例子就是机器翻译（原语言和目的语言的长度并不相同）。该模型首先将输入编码成上下文相关的向量\(c\)，然后使用另一个RNN网络对向量\(c\)进行解码。
+</p>
+
+<p>
+<a href="https://pic1.zhimg.com/80/v2-e0fbb46d897400a384873fc100c442db_hd.jpg">图：NvM RNN</a>
+</p>
+
+<p>
+由于不限制输入和输出的长度，因此NvM RNN 可用于机器翻译、文本摘要、语音识别（语音到文字序列）
+</p>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> Bi-RNN</h4>
+</div>
+
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> LSTM</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<p>
+传统RNN的问题在于当前的输出\(h_{t}\)和前一隐藏状态\(h_{t-1}\)相关，而和\(h_{t-2}\)间接相关&#x2026;如此相关性递减，而在有些领域（比如NLP）中，当前输出和前面很远的隐藏状态的输出相关，<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">这篇文章</a> 中举了一个例子：I grew up in France&#x2026; I speak fluent /French/。在这里，French位置根据前面两个单词的预测可能是任何语言，但在前方很远的地方却已经给出了很明显的“提示”。
+</p>
+
+<p>
+为了解决这样的问题，<a href="http://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter &amp; Schmidhuber (1997)</a> 提出了<a href="https://en.wikipedia.org/wiki/Long_short-term_memory">LSTM</a> ，其是经典RNN的变种之一。RNN在处理\(x^{(t)}\)和\(h^(t-1)\)时，使用的是普通的激活函数sigmoid，而LSTM改造了这一块，包含更复杂的结构，简单说来就是在新一时间序列轮时，决定哪些更新哪些不更新。
+</p>
+
+<p>
+详细的说来，在RNN中的\(\sigma{(z^{t})}\)这一块，LSTM替换成了<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/img/LSTM3-chain.png">四个激活函数以及三个gate（input gate, output gate and forget gate）</a>，同时不同于RNN，LSTM在隐藏状态\(h^{(t)}\)的基础上还增加了一个 <b>细胞状态</b> \(C^{(t)}\)。首先，在<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/img/LSTM3-focus-f.png">forget gate</a> 这里：
+$$f^{(t)}=\sigma{(W_{f}\cdot{[h^{(t-1)},x^{(t)}]}+b_{f})}$$
+该函数的输出值（0～1）决定\(C^{(t-1)}\)中有多少保留，有多少丢弃，保留的保留多少，丢弃的丢弃多少。然后<a href="https://upload-images.jianshu.io/upload_images/42741-7fa07e640593f930.png?imageMogr2/auto-orient/strip|imageView2/2/w/700">input gate</a> 这里由两部分决定新的信息（\(h^{(t-1)}\)和\(x^{(t)}\)）中有多少加入到新的细胞状态\(C^{(t)}\)中：
+$$i^{(t)}=\sigma{(W_{i}\cdot{[h^{(t-1)},x^{(t)}]}+b_{i})}$$
+$$\hat{C}^{(t)}=tanh(W_{C}\cdot{[h^{(t-1)},x^{(t)}]}+b_{C})$$
+此时可以将\(C^{(t-1)}\)更新为\(C^{(t)}\)：
+$$C^{(t)}=f^{(t)}*C^{(t-1)}+i^{(t)}*\hat{C}^{(t)}$$
+完成后，会有<a href="https://upload-images.jianshu.io/upload_images/42741-4c9186bf786063d6.png?imageMogr2/auto-orient/strip|imageView2/2/w/700">output gate</a> 来决定细胞状态的什么特征信息可以输出：
+$$o^{(t)}=\sigma{(W_{o}\cdot{[h^{(t-1)},x^{(t)}]}+b_{o})}$$
+$$h^{(t)}=o^{(t)}*tanh(C^{(t)})$$
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> CNN</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+<a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">卷积神经网络</a> 通常用于计算机视觉，对于图像中的同一个物体，如果只是位于不同图像的不同位置，如果使用传统的前馈神经网络，由于其是全联接的，即输入层与隐层之间是完全连接的，则需要不同的样本对所有的位置情况进行覆盖，而无法学习到图像中物体的特征，CNN的隐层单元则是只与输入单元中在图像中“相邻的一部分”连接，而这所谓“相邻的一部分”的选择方式其实就是图像中<a href="http://www.cnblogs.com/nsnow/p/4562308.html">相邻的部分传递给下一层的某个单元</a>， 同一层中所有单元接收上一层（“一部分”）输入的权重共享，因此CNN中隐藏层中的单元必然比输入层的单元的个数要少。经过卷积层之后的Convolved features还需要进行池化，以克服计算量仍然较大且过拟合的问题，就是在卷积特征的基础上对一个区域进行特定特征的平均值（或者最大值）的计算，以计算后的值代替这个区域，进一步降维。进行卷积和池化的原因都是基于图像具有“静态性”的属性，因此意味着一个图像区域有用的特征极有可能在另一个区域同样的使用。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 学习算法</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+从原理上来说，神经网络同SVM一样，都是将当前线性不可分的空间投射到另一个线性可分的空间中，只是神经网络利用了矩阵（\(W\)）的线性变化加上激活函数\(f(\cdot)\)的非线性变化共同作用来达到投射的目的。一个神经网络，增加一层layer的点数即是增加线性转换的能力，增加layer的层数即是增加非线性转换的能力。线性转换负责对空间进行升维／降维、放大／缩小、旋转和平移，而非线性转换则负责对空间进行“弯曲”。如果将输入层接收的元素比喻为当前所有种类的原子，则随着layers的递进，原子会递进组合成新物质，最终甚至组合成整个万千世界，而这中间的矩阵\(W\)则储存着如何从上一层的物质形成新的物质的信息。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 参考</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>周志华，《机器学习》
+</li>
+<li><a href="https://en.wikipedia.org/wiki/Main_Page">wikipedia</a>
+</li>
+<li><a href="https://zhuanlan.zhihu.com/p/28054589">完全图解RNN、RNN变体、Seq2Seq、Attention机制</a>
+</li>
+<li><a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a>
+</li>
+<li><a href="https://zhuanlan.zhihu.com/p/22888385">深层学习为何要“Deep”（上）</a>
+</li>
+<li><a href="https://zhuanlan.zhihu.com/p/27642620">YJango的卷积神经网络——介绍</a>
+</li>
+<li><a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">* Neural Networks, Manifolds, and Topology</a>
+</li>
+<li><a href="http://colah.github.io/posts/2015-08-Backprop/">* Calculus on Computational Graphs: Backpropagation</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>
