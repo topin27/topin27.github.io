@@ -1,0 +1,17 @@
+#+TITLE: topin27's personal page
+
+#+BEGIN_COMMENT
+
+#+BEGIN_CENTER
+[[file:index.org][Home]] | [[file:articles/index.org][Articles]] | [[file:notes/index.org][Notes]] | [[file:books/index.org][Books Notes]] | [[file:papers/index.org][Papers Notes]] | [[file:blogs/index.org][Blogs]]
+#+END_CENTER
+
+#+END_COMMENT
+
+Welcome to my homepage on the web. I'm working for a security company in Chengdu.
+You can visit all my meaningless repos on [[https://github.com/topin27/][github]] , including some code snippets
+and documents.
+
+#+BEGIN_CENTER
+[[http://www.catb.org/hacker-emblem/glider.png]]
+#+END_CENTER
