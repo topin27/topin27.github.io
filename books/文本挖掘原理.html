@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>《文本挖掘原理》</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">《文本挖掘原理》</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#文本挖掘的任务"><span class="toc-section-number">1</span> 文本挖掘的任务</a><ul>
+<li><a href="#文本挖掘预处理"><span class="toc-section-number">1.1</span> 文本挖掘预处理</a></li>
+<li><a href="#文本挖掘模式"><span class="toc-section-number">1.2</span> 文本挖掘模式</a></li>
+</ul></li>
+<li><a href="#文本表示"><span class="toc-section-number">2</span> 文本表示</a><ul>
+<li><a href="#向量空间模型"><span class="toc-section-number">2.1</span> 向量空间模型</a><ul>
+<li><a href="#权值计算"><span class="toc-section-number">2.1.1</span> 权值计算</a></li>
+<li><a href="#向量相似度"><span class="toc-section-number">2.1.2</span> 向量相似度</a></li>
+</ul></li>
+<li><a href="#概率模型"><span class="toc-section-number">2.2</span> 概率模型</a></li>
+<li><a href="#概念模型"><span class="toc-section-number">2.3</span> 概念模型</a><ul>
+<li><a href="#概念距离"><span class="toc-section-number">2.3.1</span> 概念距离</a></li>
+<li><a href="#概念相似度"><span class="toc-section-number">2.3.2</span> 概念相似度</a></li>
+<li><a href="#基于概念的文本表示模型的构建"><span class="toc-section-number">2.3.3</span> 基于概念的文本表示模型的构建</a></li>
+<li><a href="#计算概念特征权值"><span class="toc-section-number">2.3.4</span> 计算概念特征权值</a></li>
+</ul></li>
+<li><a href="#特征生成"><span class="toc-section-number">2.4</span> 特征生成</a><ul>
+<li><a href="#常用的文本特征"><span class="toc-section-number">2.4.1</span> 常用的文本特征</a></li>
+<li><a href="#各种特征比较"><span class="toc-section-number">2.4.2</span> 各种特征比较</a></li>
+</ul></li>
+<li><a href="#特征选择"><span class="toc-section-number">2.5</span> 特征选择</a></li>
+<li><a href="#特征抽取"><span class="toc-section-number">2.6</span> 特征抽取</a><ul>
+<li><a href="#潜在语义分析lsa"><span class="toc-section-number">2.6.1</span> 潜在语义分析（LSA）</a></li>
+<li><a href="#同义项合并"><span class="toc-section-number">2.6.2</span> 同义项合并</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#文本挖掘预处理文本分类"><span class="toc-section-number">3</span> 文本挖掘预处理——文本分类</a><ul>
+<li><a href="#文本分类的种类"><span class="toc-section-number">3.1</span> 文本分类的种类</a><ul>
+<li><a href="#硬分类和软分类"><span class="toc-section-number">3.1.1</span> 硬分类和软分类</a></li>
+</ul></li>
+<li><a href="#文本分类的应用"><span class="toc-section-number">3.2</span> 文本分类的应用</a></li>
+<li><a href="#bootstrapping算法"><span class="toc-section-number">3.3</span> Bootstrapping算法</a></li>
+</ul></li>
+<li><a href="#文本挖掘预处理文本聚类"><span class="toc-section-number">4</span> 文本挖掘预处理——文本聚类</a><ul>
+<li><a href="#聚类的任务"><span class="toc-section-number">4.1</span> 聚类的任务</a><ul>
+<li><a href="#检索召回率的改进"><span class="toc-section-number">4.1.1</span> 检索召回率的改进</a></li>
+<li><a href="#检索正确率的改进"><span class="toc-section-number">4.1.2</span> 检索正确率的改进</a></li>
+<li><a href="#分割聚合"><span class="toc-section-number">4.1.3</span> 分割/聚合</a></li>
+<li><a href="#特殊查询的聚类"><span class="toc-section-number">4.1.4</span> 特殊查询的聚类</a></li>
+</ul></li>
+<li><a href="#聚类算法"><span class="toc-section-number">4.2</span> 聚类算法</a><ul>
+<li><a href="#k均值算法"><span class="toc-section-number">4.2.1</span> K均值算法</a></li>
+<li><a href="#基于em的概率模糊聚类算法"><span class="toc-section-number">4.2.2</span> 基于EM的概率模糊聚类算法</a></li>
+<li><a href="#层次聚类法"><span class="toc-section-number">4.2.3</span> 层次聚类法</a></li>
+</ul></li>
+<li><a href="#文本聚类"><span class="toc-section-number">4.3</span> 文本聚类</a><ul>
+<li><a href="#文本聚类测试"><span class="toc-section-number">4.3.1</span> 文本聚类测试</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#文本挖掘的核心操作信息抽取"><span class="toc-section-number">5</span> 文本挖掘的核心操作——信息抽取</a><ul>
+<li><a href="#信息抽取简介"><span class="toc-section-number">5.1</span> 信息抽取简介</a></li>
+<li><a href="#信息抽取系统的体系结构"><span class="toc-section-number">5.2</span> 信息抽取系统的体系结构</a></li>
+<li><a href="#指代消解"><span class="toc-section-number">5.3</span> 指代消解</a><ul>
+<li><a href="#回指和共指"><span class="toc-section-number">5.3.1</span> 回指和共指</a></li>
+<li><a href="#代词消解方法"><span class="toc-section-number">5.3.2</span> 代词消解方法</a></li>
+</ul></li>
+<li><a href="#规则学习"><span class="toc-section-number">5.4</span> 规则学习</a><ul>
+<li><a href="#whisk"><span class="toc-section-number">5.4.1</span> WHISK</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#文本挖掘核心操作关系抽取"><span class="toc-section-number">6</span> 文本挖掘核心操作——关系抽取</a><ul>
+<li><a href="#实体关系抽取"><span class="toc-section-number">6.1</span> 实体关系抽取</a><ul>
+<li><a href="#实体关系"><span class="toc-section-number">6.1.1</span> 实体关系</a></li>
+<li><a href="#实体关系抽取方法"><span class="toc-section-number">6.1.2</span> 实体关系抽取方法</a></li>
+<li><a href="#实体关系标注"><span class="toc-section-number">6.1.3</span> 实体关系标注</a></li>
+<li><a href="#实体关系特征信息"><span class="toc-section-number">6.1.4</span> 实体关系特征信息</a></li>
+</ul></li>
+<li><a href="#web中的实体关系发现"><span class="toc-section-number">6.2</span> Web中的实体关系发现</a><ul>
+<li><a href="#先确定关系模式的方法"><span class="toc-section-number">6.2.1</span> 先确定关系模式的方法</a></li>
+<li><a href="#后确定关系模式的方法"><span class="toc-section-number">6.2.2</span> 后确定关系模式的方法</a></li>
+</ul></li>
+<li><a href="#实体关系发现的难点"><span class="toc-section-number">6.3</span> 实体关系发现的难点</a><ul>
+<li><a href="#实体关系对的确定"><span class="toc-section-number">6.3.1</span> 实体关系对的确定</a></li>
+<li><a href="#实体关系描述文本的筛选与扩展"><span class="toc-section-number">6.3.2</span> 实体关系描述文本的筛选与扩展</a></li>
+</ul></li>
+<li><a href="#基于社会网络的实体关系发现"><span class="toc-section-number">6.4</span> 基于社会网络的实体关系发现</a><ul>
+<li><a href="#社会网络构建"><span class="toc-section-number">6.4.1</span> 社会网络构建</a></li>
+</ul></li>
+<li><a href="#实体包含关系的抽取"><span class="toc-section-number">6.5</span> 实体包含关系的抽取</a><ul>
+<li><a href="#特征选择-1"><span class="toc-section-number">6.5.1</span> 特征选择</a></li>
+<li><a href="#词汇特征"><span class="toc-section-number">6.5.2</span> 词汇特征</a></li>
+<li><a href="#实体类型特征"><span class="toc-section-number">6.5.3</span> 实体类型特征</a></li>
+<li><a href="#两个实体的相对位置特征"><span class="toc-section-number">6.5.4</span> 两个实体的相对位置特征</a></li>
+</ul></li>
+<li><a href="#基于全信息的隐含的多实体关系抽取"><span class="toc-section-number">6.6</span> 基于全信息的隐含的多实体关系抽取</a><ul>
+<li><a href="#全信息的自然语言理解方法"><span class="toc-section-number">6.6.1</span> 全信息的自然语言理解方法</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="文本挖掘的任务"><span class="header-section-number">1</span> 文本挖掘的任务</h1>
+<h2 id="文本挖掘预处理"><span class="header-section-number">1.1</span> 文本挖掘预处理</h2>
+<p>有效的文本挖掘操作取决于先进的数据预处理方法。事实上，为了从原始非结构化数据源给出或抽取结构化表示，文本挖掘可以说是非常依赖于各种预处理技术，甚至在某种程度上，文本挖掘可以由这些预处理技术定义。</p>
+<h2 id="文本挖掘模式"><span class="header-section-number">1.2</span> 文本挖掘模式</h2>
+<p>文本挖掘系统的核心功能表现为分析一个 <strong>文本集合</strong> 中的各个文本之间概念共同出现的模式。因此大多时候单独说单个文本没有太大的意义。</p>
+<h1 id="文本表示"><span class="header-section-number">2</span> 文本表示</h1>
+<h2 id="向量空间模型"><span class="header-section-number">2.1</span> 向量空间模型</h2>
+<p>向量空间模型（vector space model, VSM）的基本思想是把文本表示成向量空间中的向量，采用向量之间的夹角余弦作为文本之间的相似性度量。向量维对应特征在文档集中的权值，这种表示形式也成为“词袋”（bag of words）。</p>
+<h3 id="权值计算"><span class="header-section-number">2.1.1</span> 权值计算</h3>
+<ol type="1">
+<li>布尔权值</li>
+<li>词频权值</li>
+<li>TF/IDF权值：<span class="math inline">\(w\_k=tf\_{ik}⋅*i**d**f*_*k*\)</span>，其中<span class="math inline">\(tf\_{ik}\)</span>表示项<span class="math inline">\(t\_k\)</span>在文档<span class="math inline">\(d\_i\)</span>中的文本内频数，<span class="math inline">\(idf\_k\)</span>表示项<span class="math inline">\(t\_k\)</span>的反比文本频数，<span class="math inline">\(idf\_k=lg(N/n\_k)\)</span>，中和考虑文本长度的因素后：[w_{ik}=]</li>
+<li>TFC权值：在TF/IDF的基础上利用文档长度对其进行规范化[w_{tk}=]</li>
+<li>ITC权值：为弱化词频差异较大带来的影响，ITC使用词频的对数形式代替TF/IDF中的词汇频率[w_{tk}=]</li>
+</ol>
+<p>向量空间的优点是计算直观方便，缺点是依赖于一个假设：特征项之间“两两正交”。但是在自然语言中，词或短语之间存在着十分密切的联系。</p>
+<h3 id="向量相似度"><span class="header-section-number">2.1.2</span> 向量相似度</h3>
+<p>向量化后，可以借助向量之间的某种距离来表示文档的相似度，常用的有：</p>
+<ol type="1">
+<li>内积：<span class="math inline">\(sim(d\_i,d\_j)=∑/{k=1}^*n*w/{ik}{⋅}w\_{jk}\)</span></li>
+<li>绝对值距离、欧几里德距离等</li>
+<li>夹角余弦：<span class="math inline">\(sim(d\_i,d\_j)=cos*θ*=\)</span></li>
+<li>切比雪夫距离：<span class="math inline">\(sim(d\_i,d\_j)=max\_k|w\_{ik}-w\_{jk}|\)</span></li>
+</ol>
+<h2 id="概率模型"><span class="header-section-number">2.2</span> 概率模型</h2>
+<p>通过赋予特征词某哦中概率值来表示这些词在相关文本和无关文本之间出现的概率，然后计算文本间的相关概率。</p>
+<p>文本d和查询q的相似度定义为：[sim(d,q)=]其中R表示相关文本集合，<span class="math inline">\(|{R}\)</span>表示R的补集，(P(R|d))表示文本d与查询q相关的概率，(P(|{R}|d))表示文本d与查询q不相关的概率。根据贝叶斯定理(P(R|d)=)有(sim(d,q)≈)。</p>
+<p>概率模型的缺点是对文本集的依赖性过强，而且处理问题过于简单。</p>
+<h2 id="概念模型"><span class="header-section-number">2.3</span> 概念模型</h2>
+<p>概念模型可以弥补向量空间模型在语言知识和领域知识中的不足，特别是解决其中存在的同义词和多义词问题。</p>
+<h3 id="概念距离"><span class="header-section-number">2.3.1</span> 概念距离</h3>
+<p>概念距离定义为两个概念各个基本属性之间最短路径长度的加权和。由于该方法依赖人工构造的词典来计算词语相似度，此过程中存在一些参数，实际使用中，如何来估计和选择这些参数使得相似度更加合理是一个很大的难题。</p>
+<h3 id="概念相似度"><span class="header-section-number">2.3.2</span> 概念相似度</h3>
+<p>在具体应用中，概念距离不常使用，而是使用一个等价的转换——概念相似度： [sim(W_1,W_2)=] 其中，(<em>α</em>)是一个可以调节的参数，含义是当相似度为0.5时的概念距离值。</p>
+<h3 id="基于概念的文本表示模型的构建"><span class="header-section-number">2.3.3</span> 基于概念的文本表示模型的构建</h3>
+<p>步骤：</p>
+<ol type="1">
+<li><p>分词，去停用词，并记录词语的位置信息；</p></li>
+<li><p>词语-概念转换；</p></li>
+<li><p>概念排歧，得到该词在当前语境下所对应的概念。主要使用的排歧方法有：</p>
+<ul>
+<li>从词性搭配的角度和规则出发确定相应位置出现的词语的词性，从而确定该词语在相应词性下所具有的概念；</li>
+<li>根据语境来确定对应的含义；</li>
+<li>从概念之间的关系-概念相似度的角度计算两个概念之间的相似度，通过比较相似度的大小确定词形的相应概念。</li>
+</ul></li>
+</ol>
+<h3 id="计算概念特征权值"><span class="header-section-number">2.3.4</span> 计算概念特征权值</h3>
+<p>经过词语-概念转换以及概念排歧后，已经得到文中各个词语在文本中对应的唯一概念，并在此基础上进行特征选择（主要是去除代词、介词、助词和功能词），然后把文本的特征用概念表示出来。</p>
+<p>统计各个特征的概念频率，通过计算得到权值，从而完成以概念作为特征的文本表示模型。</p>
+<h2 id="特征生成"><span class="header-section-number">2.4</span> 特征生成</h2>
+<p>大多数文本挖掘系统的一项基本的任务就是识别出文本特征的一个最简单的子集，并用以表示特定的文本，这样的一组特征称为文本特征。</p>
+<h3 id="常用的文本特征"><span class="header-section-number">2.4.1</span> 常用的文本特征</h3>
+<p>常用的文本特征：</p>
+<ol type="1">
+<li>字词。无位置信息的基于字词的表示方法在文本挖掘中的应用很有限，而包含位置信息的基于支持的表示方法这在一定程度上更加有效和常用。</li>
+<li>词组。</li>
+<li>短语。短语是直接通过实体抽取方法从原始文本语料库中选择出来的单个支持或复合词组。</li>
+<li>概念。</li>
+</ol>
+<h3 id="各种特征比较"><span class="header-section-number">2.4.2</span> 各种特征比较</h3>
+<p>基于短语和概念的表示方法比基于字词和词组的表示方法效率更高，而短语级表示方法有时更简单，而且可以从原始的原文本中自动生成，概念级方法往往需要人工交互，此外，概念级还可以处理同义词、多义词问题。</p>
+<p>概念级表示方法的缺点是出去概念类型的特征方法相对复杂，并且许多概念和领域是相关的。</p>
+<h2 id="特征选择"><span class="header-section-number">2.5</span> 特征选择</h2>
+<p>在预处理步骤中，删除不相关的字词的过程称为特征选择，大多数文本分类系统至少需要删除停用词或功能词。</p>
+<p>实验证据表明，仅使用前10%最频繁的字词并不降低分类器的性能。</p>
+<p>通过信息增益或者卡方选择进行特征选择。</p>
+<h2 id="特征抽取"><span class="header-section-number">2.6</span> 特征抽取</h2>
+<p>对原始特征进行映射，映射到另一个维度低的特征空间。</p>
+<h3 id="潜在语义分析lsa"><span class="header-section-number">2.6.1</span> 潜在语义分析（LSA）</h3>
+<p>LSA是通过统计计算方法来分析自然语言中词语、段落或语篇间在语义上的相互联系及其内在规律，从而对知识进行归纳、表征和应用的理论模型。其采用的关键技术是奇异值分解（singular value decomposition, SVD）。</p>
+<p>首先LSA将向量空间视为一个(T{×}D)的“词语-文档”矩阵(X)，而任何(T{×}D)的矩阵都可以分解为3个矩阵的乘积，即(X=T_0S_0D_0^<em>T</em>)。其中(T_0)、(D_0)分别为左正交词语向量矩阵和右正交文档向量矩阵，(S_0)为正单值对角线矩阵，其中降序排列的非0值称为奇异值。在此“语义空间”中，大奇异值所对应的维度更具词语的共性，小奇异值对应的维度更显词语的个性。通过从对角线矩阵中选出k个最大奇异值与其相邻的左右正交矩阵中所对应的向量同构一个经过压缩的新矩阵(U)，即潜在语义空间，以此来近似地表示原始稀疏矩阵(X)的语义空间。</p>
+<p>该方法的缺点是k的选取，k足够大，能够适合所有的潜在语义结构，但k太大又会导致噪声。k太小，则不能适应样本的误差或其他次要细节。此外，矩阵的SVD对数据的变化非常敏感，文档集合的任何变动都会对LSA模型有全局的影响，从而导致需要对LSA模型整体重新进行高复杂度的SVD计算。所以在文本集合变化较频繁的情况下，LSA的使用受到限制。</p>
+<h3 id="同义项合并"><span class="header-section-number">2.6.2</span> 同义项合并</h3>
+<p>常用同义词词林、知网、概念层次网络（HNC）等词典资源计算词语间的相似度来进行义项合并。</p>
+<p>词语相关性：反映两个词在同一个语境共现的可能性； 词语相似性：在不同的上下文中可以互相替换使用而不改变文本的句法语义结构的程度，主观性较强。</p>
+<h1 id="文本挖掘预处理文本分类"><span class="header-section-number">3</span> 文本挖掘预处理——文本分类</h1>
+<h2 id="文本分类的种类"><span class="header-section-number">3.1</span> 文本分类的种类</h2>
+<h3 id="硬分类和软分类"><span class="header-section-number">3.1.1</span> 硬分类和软分类</h3>
+<p>类别由人提供，系统为每个文本进行评估，这种称为软分类。</p>
+<p>对于阈值的确定，常用的设置阈值方法是在测试集上最大化分类器的性能，测试集是训练集中未用于创建模型所使用的样本，测试集的唯一目的是优化分类器的一些参数。</p>
+<h2 id="文本分类的应用"><span class="header-section-number">3.2</span> 文本分类的应用</h2>
+<ul>
+<li>文本索引</li>
+<li>文本过滤</li>
+<li>网页分类</li>
+</ul>
+<h2 id="bootstrapping算法"><span class="header-section-number">3.3</span> Bootstrapping算法</h2>
+<p>Bootstrapping算法介于知识工程和机器学习方法之间，主要思想是用户通过提供一小部分初始词典或者规则来供给初始偏差。</p>
+<h1 id="文本挖掘预处理文本聚类"><span class="header-section-number">4</span> 文本挖掘预处理——文本聚类</h1>
+<h2 id="聚类的任务"><span class="header-section-number">4.1</span> 聚类的任务</h2>
+<p>聚类的基本假设：相关文本之间比不相关文本之间更加相似。</p>
+<h3 id="检索召回率的改进"><span class="header-section-number">4.1.1</span> 检索召回率的改进</h3>
+<p>NLP中同一个概念可以有不同的表述，如果仅用一种表述进行检索，很有可能会丢失同义词的相关资料，使用聚类则可以以相似性为基础，提高召回率，只要查询匹配一个文本，就可以得到同一个聚类中的其他文本。</p>
+<p>文本的相似性可以有很多种情况，仅用一种相似度量方法在很大程度上降低了检索的精度。</p>
+<h3 id="检索正确率的改进"><span class="header-section-number">4.1.2</span> 检索正确率的改进</h3>
+<p>聚类通过根据文本的相关性将文本分成更小的组，当在检索时，如果搜索一个文本，则可以仅返回同类中最相关的几个文本。</p>
+<h3 id="分割聚合"><span class="header-section-number">4.1.3</span> 分割/聚合</h3>
+<p>根据聚类的结果，用户选择一个或者几个相关联的聚类，重复下去，产生新的类。</p>
+<h3 id="特殊查询的聚类"><span class="header-section-number">4.1.4</span> 特殊查询的聚类</h3>
+<p>层次聚类中最有关联的文本将在最紧密的聚类中出现，而这个聚类将会嵌套在更大的包含更少的文本的聚类里。</p>
+<h2 id="聚类算法"><span class="header-section-number">4.2</span> 聚类算法</h2>
+<p>聚类优化问题很难计算，通常使用的是一些贪婪近似的算法。</p>
+<h3 id="k均值算法"><span class="header-section-number">4.2.1</span> K均值算法</h3>
+<blockquote>
+<ol type="1">
+<li>随机给定K个聚类中心；</li>
+<li>迭代，聚类中心M，按照公式(M_i=|C_i|^−1∑_{x{∈}C_i}x)，每个向量都重新分给最近中心位置所在的聚类；</li>
+<li>停止条件，当聚类不再发生变化。最大化聚类度量函数Q的计算方式为(Q(C_1,C_2,…,C_k)=∑/{C_i}∑/{x{∈}C_i}sim(x-M_i))</li>
+</ol>
+</blockquote>
+<p>其主要缺点是对初始中心的选择很敏感，如果选择了不理想的中心，生成的聚类通常不理想。</p>
+<p>一种改进是允许结果聚类进行后处理，如ISODATA算法会将阶距低于阈值的类别进行合并，而将方差过高的类别进行分割。</p>
+<h3 id="基于em的概率模糊聚类算法"><span class="header-section-number">4.2.2</span> 基于EM的概率模糊聚类算法</h3>
+<p>为适应聚类，假设对象聚类服从K分布，算法如下：</p>
+<blockquote>
+<ol type="1">
+<li>初始化。K分布的初始参数选择既可以随机选择，也可以给定；</li>
+<li>迭代。(1) E-步骤，通过当前参数的分布对所有对象(x)计算(P(C_i|x))，根据计算概率重新标记对象；(2) M-步骤，重新估计参数的分布以使当前标记对象最大化。</li>
+<li>停止条件。对象标记不再发生变化，对象的最后标签作为模糊聚类的类别。</li>
+</ol>
+</blockquote>
+<h3 id="层次聚类法"><span class="header-section-number">4.2.3</span> 层次聚类法</h3>
+<blockquote>
+<ol type="1">
+<li>初始化。每个对象单独一类；</li>
+<li>迭代。找出最相似的两类进行合并；</li>
+<li>停止条件。全部合并成一类。</li>
+</ol>
+</blockquote>
+<p>根据相似度计算方法不同会产生不同版本的算法。在“单连接”方法里，两类相似认定是在对象集合里两类相似度最大的，在“完全连接”方法里，相似的判别是最小的。“单连接”的做法适合细长链状的对象，而“完全连接”方法适合圆形分布的对象集合。</p>
+<h2 id="文本聚类"><span class="header-section-number">4.3</span> 文本聚类</h2>
+<h3 id="文本聚类测试"><span class="header-section-number">4.3.1</span> 文本聚类测试</h3>
+<p>常用的聚类评价方法是纯度准则。假设({L_1,L_2,…,L_n})是文本自动标识类，({C_1,C_2,…,C_m})是由聚类处理后的新类，纯度准则如下：[purity(C_i)=max_j|L_j{∩}C_i|/|C_i|]</p>
+<h1 id="文本挖掘的核心操作信息抽取"><span class="header-section-number">5</span> 文本挖掘的核心操作——信息抽取</h1>
+<h2 id="信息抽取简介"><span class="header-section-number">5.1</span> 信息抽取简介</h2>
+<p>目前，可以从文本中抽取四种基本的元素：</p>
+<ol type="1">
+<li>实体。</li>
+<li>属性。属性是实体的特征，如人的头衔、人的年龄以及组织的类型等。</li>
+<li>关系。实体之间的关系。</li>
+<li>事件。事件是实体的行为或实体因为兴趣而参加的活动。</li>
+</ol>
+<h2 id="信息抽取系统的体系结构"><span class="header-section-number">5.2</span> 信息抽取系统的体系结构</h2>
+<pre><code>分词-&gt;形态及词法分析（词性标注、语义消岐）-&gt;句法分析（浅层分析、深层分析）-&gt;领域分析（指代消解、集成）</code></pre>
+<p>句法分析在句子的不同部分间建立了连接，通过进行完全句法分析或部分句法分析完成。</p>
+<p>领域分析的工作是将前面构件的信息集合起来，并生成描述实体关系的完整框架。好的领域分析模块同时也拥有指代消解模块，可将实体本身和间接所指关联起来，该间接所指可能和最初直接指明的实体没出现在同一个句子中。</p>
+<p>信息抽取中，在初步识别出实体后，需要使用浅层的语法分析对发现的名词短语进行构建名词组，通常是建立在一些通用的模式之上，但是这里的模式并非是简单的短语模式，而是实体模式，比如对于文本片段（其中&lt;&gt;内标注的是词性类型）：</p>
+<pre><code>Associated Builders and Contractors (ABC) today announced that Bob Piper, co-owner&lt;Position&gt; and vice president of corporate operations&lt;Position&gt;, Piper Electric Co, Inc.&lt;Company&gt;, Arvada, Colo.&lt;Location&gt;, has been named vice president of workforce development</code></pre>
+<p>根据经验构建的实体模式：</p>
+<pre><code>1. Position and Position, Company
+2. Company, Location.</code></pre>
+<p>我们可以构建出以下的名词组：</p>
+<pre><code>1. co-owner and vice president of corporate operations, Piper Electric Co., Inc.
+2. Piper Electric Co., Inc., Arvada, Colo.</code></pre>
+<h2 id="指代消解"><span class="header-section-number">5.3</span> 指代消解</h2>
+<h3 id="回指和共指"><span class="header-section-number">5.3.1</span> 回指和共指</h3>
+<p>指代消解一般分为回指和共指。回指是指当前的指示语与上下文出现的词、短语或句子存在密切的语义关联性；共指则主要指两个名词（包括代名词、名词短语）指向真实世界中的同一参照体，比如“美国总统”和“布什”就是。</p>
+<ol type="1">
+<li><p>回指关系</p>
+<p>指代消解的目的是消歧。</p>
+<ol type="1">
+<li>语音歧义：“这个人好说话”中的“好”；</li>
+<li>多义歧义：“打电话”、“打车”中的“打”；</li>
+<li>结构歧义；</li>
+</ol>
+<p>4.. 指代歧义：代词（你、我、她）和代词词组（这一点、那件事）；</p>
+<ol type="1">
+<li>省略歧义：“他说（得/他）不清楚”（省略的是“得”还是“他”）；</li>
+<li>语境歧义：“小秦有女朋友。她长得很漂亮”中的“她”是“小秦”还是“小秦的女朋友”。</li>
+</ol></li>
+<li><p>共指关系</p>
+<ol type="1">
+<li>专有名称共指</li>
+<li>同位语</li>
+<li>谓词主格</li>
+<li>等价集</li>
+<li>“函数-值”共指</li>
+<li>序照应</li>
+<li>one照应</li>
+<li>“部分-整体指代</li>
+</ol></li>
+</ol>
+<h3 id="代词消解方法"><span class="header-section-number">5.3.2</span> 代词消解方法</h3>
+<h2 id="规则学习"><span class="header-section-number">5.4</span> 规则学习</h2>
+<h3 id="whisk"><span class="header-section-number">5.4.1</span> WHISK</h3>
+<p>WHISK是一种有监督的学习算法，它使用手工标注的实例进行信息抽取规则的学习。</p>
+<h1 id="文本挖掘核心操作关系抽取"><span class="header-section-number">6</span> 文本挖掘核心操作——关系抽取</h1>
+<p>信息抽取的主要功能是自动将文本转化为数据表格，实体抽取确定了表格中的各个元素，实体关系抽取则确定了这些元素在表格中的相对位置。</p>
+<h2 id="实体关系抽取"><span class="header-section-number">6.1</span> 实体关系抽取</h2>
+<h3 id="实体关系"><span class="header-section-number">6.1.1</span> 实体关系</h3>
+<p>目前主要有以下七种关系：</p>
+<ol type="1">
+<li>局部整体关系（PART-WHOLE）</li>
+<li>地理位置关系（PHYS）</li>
+<li>类属关系（GEN-AFF）</li>
+<li>转喻关系（METONYMY）</li>
+<li>制造使用关系（ART）</li>
+<li>组织结构从属关系（ORG-AFF）</li>
+<li>任务关系（PER-SOC）</li>
+</ol>
+<p>其中每一个大类又包含若干之类。</p>
+<h3 id="实体关系抽取方法"><span class="header-section-number">6.1.2</span> 实体关系抽取方法</h3>
+<ol type="1">
+<li><p>基于规则覆盖的实体关系抽取</p></li>
+<li><p>基于特征的实体关系抽取</p></li>
+<li><p>基于核函数的实体关系抽取</p>
+<p>首先对句子进行浅层句法分析，抽取名词短语、动词短语、介词短语、实体以及相应角色的信息，对句法分析树中的节点定义匹配函数和相似函数。匹配函数反映两个节点的类型和角色是否匹配，相似函数这计算节点的贡献度。</p></li>
+<li><p>基于无监督的学习方法</p>
+<p>bootstrapping算法，先定义种子模板，利用种子从未标注语料中学习到更多的模板，利用模板对文本进行匹配，从而获得相应的实体关系。</p></li>
+</ol>
+<h3 id="实体关系标注"><span class="header-section-number">6.1.3</span> 实体关系标注</h3>
+<p>实体关系的标注的最大困难在于文本中不存在能明显反应关系的词汇元素，关系是靠读者依靠外部知识推理出来的。</p>
+<h3 id="实体关系特征信息"><span class="header-section-number">6.1.4</span> 实体关系特征信息</h3>
+<p>从实体对的角度出发，实体关系抽取中常用的特征信息：</p>
+<ol type="1">
+<li>实体相关特征。（1）实体对中两个实体的实体类型实体类型的组合对确定两个实体之间的关系具有很好的作用。（2）实体之间的包含关系。也就是句子中对两个实体进行描述的字符串的包含关系。</li>
+<li>实体对上下文环境特征。其实就是两个实体周围的词。</li>
+<li>实体位置关系特征。很多情况下一个句子中的所有实体的整体位置关系对过滤实体对（剔除非关系实例）有很大帮助。</li>
+</ol>
+<h2 id="web中的实体关系发现"><span class="header-section-number">6.2</span> Web中的实体关系发现</h2>
+<h3 id="先确定关系模式的方法"><span class="header-section-number">6.2.1</span> 先确定关系模式的方法</h3>
+<ol type="1">
+<li><p>有监督的学习方法</p>
+<p>关系抽取领域，由监督方法占据主导地位。</p></li>
+<li><p>弱监督的学习方法</p>
+<p>预先定义一些关系和关系实例作为种子，然后通过机器学习，发现一些新的关系模板。</p>
+<p>典型的方式是从一个种子关系集合出发，在web网页中发现这些种子的上下文，然后从这些上下文中产生对应的模式，进而利用这些模式从web网页中发现更多的关系实力。</p></li>
+</ol>
+<h3 id="后确定关系模式的方法"><span class="header-section-number">6.2.2</span> 后确定关系模式的方法</h3>
+<p>先确定关系实体对，再确定关系模式。</p>
+<p>首先剔除出现频率较低的命名实体对，然后提取每个命名实体对实力的上下文，并将同一命名实体对的所有实例和上下文进行累加作为该实体对的上下文，对实体对的上下文进行聚类，最后在得到的类中寻找出现频率最高的词汇，并以该词汇标注该类命名实体对的关系。</p>
+<h2 id="实体关系发现的难点"><span class="header-section-number">6.3</span> 实体关系发现的难点</h2>
+<h3 id="实体关系对的确定"><span class="header-section-number">6.3.1</span> 实体关系对的确定</h3>
+<p>分为两类：一类是利用特定的模式来确定关系对，另一类是利用实体在网页文本中的共现来确定关系对。其中第二种方式的简单做法是设置一个固定长度的滑动窗口进行检验。</p>
+<h3 id="实体关系描述文本的筛选与扩展"><span class="header-section-number">6.3.2</span> 实体关系描述文本的筛选与扩展</h3>
+<p>最初的做法是使用实体对共现处的文本作为关系对描述文本，这样做法对于高质量的数据集，如基于报纸文档的数据集有很好的效果，而对于来自web的文档有问题：web文档不仅包含文字信息，还包含元信息，这些信息应该赋予更大的权重。</p>
+<h2 id="基于社会网络的实体关系发现"><span class="header-section-number">6.4</span> 基于社会网络的实体关系发现</h2>
+<h3 id="社会网络构建"><span class="header-section-number">6.4.1</span> 社会网络构建</h3>
+<p>现有的研究工作分为两种，一种是面向论坛系统的研究，这是的网络构建是天然的，其网络构建直接以论坛中用户作为网络的节点，利用论坛用户被要求填写的个人信息，以及好友关系或者用户之间互动关系来构建社会网络中的边；另一种工作则是以网页内容中的实体为核心，其网络的构建需要显式的发现文本中的命名实体，并且定义、发现实体之间的关系。</p>
+<h2 id="实体包含关系的抽取"><span class="header-section-number">6.5</span> 实体包含关系的抽取</h2>
+<p>包含关系子任务和非包含关系子任务可以直接通过两个实体在句子中的相对位置来区分，或者通过在句法树中的相对位置来进行区分，如果两个实体在树中的节点之间是祖先-子孙关系，这属于包含关系子任务。</p>
+<h3 id="特征选择-1"><span class="header-section-number">6.5.1</span> 特征选择</h3>
+<ol type="1">
+<li><p>包含关系句法特征</p></li>
+<li><p>非包含关系句法特征</p>
+<ol type="1">
+<li>祖先成分。从两个实体的最近父节点开始，向上搜索，出现最近的句法成分为NP、PP、VP、IP中任一个即为祖先成分特征。</li>
+<li>两个实体之间的路径。实体E1在树中的节点到实体E2在树中的节点的句法路径，由每个节点的句法成分组成。</li>
+<li>依赖动词以及实体到依赖动词的路径。依赖动词特征以及两个实体分别到该动词的句法路径。中文的很多句子都是长句，具有多个动词，根据中文的特点，选择距离位置较后实体最近的动词作为依赖动词，并且优先考虑实体前面的动词。</li>
+</ol></li>
+</ol>
+<h3 id="词汇特征"><span class="header-section-number">6.5.2</span> 词汇特征</h3>
+<p>考虑两个位置的词汇特征，一个是实体本身包含的词汇，包括所有词特征以及中心词特征，例如“南斯拉夫总统”这个实体，所有词特征就是“南斯拉夫总统”整个词组，中心词就是“总统”。另一个是实体邻近的一些词汇以及它们的词性。比如：</p>
+<ol type="1">
+<li>实体E1所有的词汇；</li>
+<li>实体E2所有的词汇；</li>
+<li>实体E1的中心词；</li>
+<li>实体E2的中心词；</li>
+<li>实体E1左边邻近的第一个词以及该词的词性；</li>
+<li>实体E1左边邻近的第二个词以及该词的词性；</li>
+<li>实体E1右边邻近的第一个词以及该词的词性；</li>
+<li>实体E1右边邻近的第二个词以及该词的词性；</li>
+</ol>
+<p>类似的也有针对E2的特征。</p>
+<h3 id="实体类型特征"><span class="header-section-number">6.5.3</span> 实体类型特征</h3>
+<p>实体的类型对于判断该关系的具体类别也是非常重要的：</p>
+<ol type="1">
+<li>实体E1的类型以及它的子类型；</li>
+<li>实体E2的类型以及它的子类型；</li>
+<li>实体类型和子类型的组合特征；</li>
+<li>实体E1和E2的类型的组合特征。</li>
+</ol>
+<h3 id="两个实体的相对位置特征"><span class="header-section-number">6.5.4</span> 两个实体的相对位置特征</h3>
+<p>包含关系和非包含关系对位置特征的定义是有差异的。对于包含关系，位置特征是指E1包含E2或者E1包含于E2；对于非包含关系，位置特征考虑的是E1在E2之前还是E1在E2之后这两种位置关系。</p>
+<h2 id="基于全信息的隐含的多实体关系抽取"><span class="header-section-number">6.6</span> 基于全信息的隐含的多实体关系抽取</h2>
+<h3 id="全信息的自然语言理解方法"><span class="header-section-number">6.6.1</span> 全信息的自然语言理解方法</h3>
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>语义依存分析（Semantic Dependency Parsing, SDP）</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">语义依存分析（Semantic Dependency Parsing, SDP）</h1>
+</header>
+<p>一个比较好的 blog：<a href="http://www.hankcs.com/nlp/sdp-corpus.html">中文语义依存分析语料库</a></p>
+<p>注意区分和依存语法（Dependency Parsing, DP）之间的区别。依存语法通过分析语言单位内成分之间的依存关系揭示其 <strong>句法结构</strong>，直观来讲，依存句法分析识别句子中的“主谓宾”、“定状补”这些语法成分，并分析各成分之间的关系<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p>依存句法标注关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>关系类型</th>
+<th>Tag</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>主谓关系</td>
+<td>SBV</td>
+<td>subject-verb</td>
+<td>我送她一束花（我&lt;-送）</td>
+</tr>
+<tr class="even">
+<td>动宾关系</td>
+<td>VOB</td>
+<td>直接宾语，verb-object</td>
+<td>我送她一束花（送-&gt;花）</td>
+</tr>
+<tr class="odd">
+<td>间宾关系</td>
+<td>IOB</td>
+<td>间接宾语，indirect-object</td>
+<td>我送她一束花（送-&gt;她）</td>
+</tr>
+<tr class="even">
+<td>前置宾语</td>
+<td>FOB</td>
+<td>前置宾语，fronting-object</td>
+<td>他什么书都读（书&lt;-读）</td>
+</tr>
+<tr class="odd">
+<td>兼语</td>
+<td>DBL</td>
+<td>double</td>
+<td>他请我吃饭（请-&gt;我）</td>
+</tr>
+<tr class="even">
+<td>定中关系</td>
+<td>ATT</td>
+<td>attribute</td>
+<td>红苹果（红&lt;-苹果）</td>
+</tr>
+<tr class="odd">
+<td>状中结构</td>
+<td>ADV</td>
+<td>adverbial</td>
+<td>非常美丽（非常&lt;-美丽）</td>
+</tr>
+<tr class="even">
+<td>动补结构</td>
+<td>CMP</td>
+<td>complement</td>
+<td>做完了作业（做-&gt;完）</td>
+</tr>
+<tr class="odd">
+<td>并列关系</td>
+<td>COO</td>
+<td>coordinate</td>
+<td>大山和大海（大山-&gt;大海）</td>
+</tr>
+<tr class="even">
+<td>介宾关系</td>
+<td>POB</td>
+<td>preposition-object</td>
+<td>在贸易区内（在-&gt;内）</td>
+</tr>
+<tr class="odd">
+<td>左附加关系</td>
+<td>LAD</td>
+<td>left adjunct</td>
+<td>大山和大海（和&lt;-大海）</td>
+</tr>
+<tr class="even">
+<td>右附加关系</td>
+<td>RAD</td>
+<td>right adjunct</td>
+<td>孩子们（孩子-&gt;们）</td>
+</tr>
+<tr class="odd">
+<td>独立结构</td>
+<td>IS</td>
+<td>independent structure</td>
+<td>两个单句在结构上彼此独立</td>
+</tr>
+<tr class="even">
+<td>核心关系</td>
+<td>HED</td>
+<td>head</td>
+<td>指整个句子的核心</td>
+</tr>
+</tbody>
+</table>
+<p>语义依存分析（Semantic Dependency Parsing, SDP）则分析句子各个语言单位之间的语义关联，并将语义关联以依存结构呈现。使用语义依存刻画句子语义，好处在于不需要去抽象词汇本身，而是通过词汇所承受的语义框架来描述该词汇，而论元的数目相对词汇来说数量总是少了很多的。语义依存分析目标是跨越句子表层句法结构的束缚，直接获取深层的语义信息。</p>
+<blockquote>
+<p>句法依存某种程度上更重视非实词在句子结构分析中的作用，而语义依存更倾向于在具有直接语义关联的实词之间建立直接依存弧。</p>
+</blockquote>
+<blockquote>
+<p>语义依存和语义角色标注之间也存在关联，语义角色标注只关注句子主要谓词的论元及谓词和论元之间的关系，而语义依存不仅关注谓词与论元的关系，还关注谓词与谓词之间、论元与论元之间、论元内部的语义关系。语义依存对句子语义信息的刻画更加完整全面。</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>关系类型</th>
+<th>Tag</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>施事关系</td>
+<td>Agt</td>
+<td>Agent</td>
+<td>我送她一束花 (我 &lt;– 送)</td>
+</tr>
+<tr class="even">
+<td>当事关系</td>
+<td>Exp</td>
+<td>Experiencer</td>
+<td>我跑得快 (跑 –&gt; 我)</td>
+</tr>
+<tr class="odd">
+<td>感事关系</td>
+<td>Aft</td>
+<td>Affection</td>
+<td>我思念家乡 (思念 –&gt; 我)</td>
+</tr>
+<tr class="even">
+<td>领事关系</td>
+<td>Poss</td>
+<td>Possessor</td>
+<td>他有一本好读 (他 &lt;– 有)</td>
+</tr>
+<tr class="odd">
+<td>受事关系</td>
+<td>Pat</td>
+<td>Patient</td>
+<td>他打了小明 (打 –&gt; 小明)</td>
+</tr>
+<tr class="even">
+<td>客事关系</td>
+<td>Cont</td>
+<td>Content</td>
+<td>他听到鞭炮声 (听 –&gt; 鞭炮声)</td>
+</tr>
+<tr class="odd">
+<td>成事关系</td>
+<td>Prod</td>
+<td>Product</td>
+<td>他写了本小说 (写 –&gt; 小说)</td>
+</tr>
+<tr class="even">
+<td>源事关系</td>
+<td>Orig</td>
+<td>Origin</td>
+<td>我军缴获敌人四辆坦克 (缴获 –&gt; 坦克)</td>
+</tr>
+<tr class="odd">
+<td>涉事关系</td>
+<td>Datv</td>
+<td>Dative</td>
+<td>他告诉我个秘密 ( 告诉 –&gt; 我 )</td>
+</tr>
+<tr class="even">
+<td>比较角色</td>
+<td>Comp</td>
+<td>Comitative</td>
+<td>他成绩比我好 (他 –&gt; 我)</td>
+</tr>
+<tr class="odd">
+<td>属事角色</td>
+<td>Belg</td>
+<td>Belongings</td>
+<td>老赵有俩女儿 (老赵 &lt;– 有)</td>
+</tr>
+<tr class="even">
+<td>类事角色</td>
+<td>Clas</td>
+<td>Classification</td>
+<td>他是中学生 (是 –&gt; 中学生)</td>
+</tr>
+<tr class="odd">
+<td>依据角色</td>
+<td>Accd</td>
+<td>According</td>
+<td>本庭依法宣判 (依法 &lt;– 宣判)</td>
+</tr>
+<tr class="even">
+<td>缘故角色</td>
+<td>Reas</td>
+<td>Reason</td>
+<td>他在愁女儿婚事 (愁 –&gt; 婚事)</td>
+</tr>
+<tr class="odd">
+<td>意图角色</td>
+<td>Int</td>
+<td>Intention</td>
+<td>为了金牌他拼命努力 (金牌 &lt;– 努力)</td>
+</tr>
+<tr class="even">
+<td>结局角色</td>
+<td>Cons</td>
+<td>Consequence</td>
+<td>他跑了满头大汗 (跑 –&gt; 满头大汗)</td>
+</tr>
+<tr class="odd">
+<td>方式角色</td>
+<td>Mann</td>
+<td>Manner</td>
+<td>球慢慢滚进空门 (慢慢 &lt;– 滚)</td>
+</tr>
+<tr class="even">
+<td>工具角色</td>
+<td>Tool</td>
+<td>Tool</td>
+<td>她用砂锅熬粥 (砂锅 &lt;– 熬粥)</td>
+</tr>
+<tr class="odd">
+<td>材料角色</td>
+<td>Malt</td>
+<td>Material</td>
+<td>她用小米熬粥 (小米 &lt;– 熬粥)</td>
+</tr>
+<tr class="even">
+<td>时间角色</td>
+<td>Time</td>
+<td>Time</td>
+<td>唐朝有个李白 (唐朝 &lt;– 有)</td>
+</tr>
+<tr class="odd">
+<td>空间角色</td>
+<td>Loc</td>
+<td>Location</td>
+<td>这房子朝南 (朝 –&gt; 南)</td>
+</tr>
+<tr class="even">
+<td>历程角色</td>
+<td>Proc</td>
+<td>Process</td>
+<td>火车正在过长江大桥 (过 –&gt; 大桥)</td>
+</tr>
+<tr class="odd">
+<td>趋向角色</td>
+<td>Dir</td>
+<td>Direction</td>
+<td>部队奔向南方 (奔 –&gt; 南)</td>
+</tr>
+<tr class="even">
+<td>范围角色</td>
+<td>Sco</td>
+<td>Scope</td>
+<td>产品应该比质量 (比 –&gt; 质量)</td>
+</tr>
+<tr class="odd">
+<td>数量角色</td>
+<td>Quan</td>
+<td>Quantity</td>
+<td>一年有365天 (有 –&gt; 天)</td>
+</tr>
+<tr class="even">
+<td>数量数组</td>
+<td>Qp</td>
+<td>Quantity-phrase</td>
+<td>三本书 (三 –&gt; 本)</td>
+</tr>
+<tr class="odd">
+<td>频率角色</td>
+<td>Freq</td>
+<td>Frequency</td>
+<td>他每天看书 (每天 &lt;– 看)</td>
+</tr>
+<tr class="even">
+<td>顺序角色</td>
+<td>Seq</td>
+<td>Sequence</td>
+<td>他跑第一 (跑 –&gt; 第一)</td>
+</tr>
+<tr class="odd">
+<td>描写角色</td>
+<td>Desc</td>
+<td>(Feat) Description</td>
+<td>他长得胖 (长 –&gt; 胖)</td>
+</tr>
+<tr class="even">
+<td>宿主角色</td>
+<td>Host</td>
+<td>Host</td>
+<td>住房面积 (住房 &lt;– 面积)</td>
+</tr>
+<tr class="odd">
+<td>名字修饰角色</td>
+<td>Nmod</td>
+<td>Name-modifier</td>
+<td>果戈里大街 (果戈里 &lt;– 大街)</td>
+</tr>
+<tr class="even">
+<td>时间修饰角色</td>
+<td>Tmod</td>
+<td>Time-modifier</td>
+<td>星期一上午 (星期一 &lt;– 上午)</td>
+</tr>
+<tr class="odd">
+<td>反角色</td>
+<td>r</td>
+<td>+ main role</td>
+<td>打篮球的小姑娘 (打篮球 &lt;– 姑娘)</td>
+</tr>
+<tr class="even">
+<td>嵌套角色</td>
+<td>d</td>
+<td>+ main role</td>
+<td>爷爷看见孙子在跑 (看见 –&gt; 跑)</td>
+</tr>
+<tr class="odd">
+<td>并列关系</td>
+<td>eCoo</td>
+<td>event Coordination</td>
+<td>我喜欢唱歌和跳舞 (唱歌 –&gt; 跳舞)</td>
+</tr>
+<tr class="even">
+<td>选择关系</td>
+<td>eSelt</td>
+<td>event Selection</td>
+<td>您是喝茶还是喝咖啡 (茶 –&gt; 咖啡)</td>
+</tr>
+<tr class="odd">
+<td>等同关系</td>
+<td>eEqu</td>
+<td>event Equivalent</td>
+<td>他们三个人一起走 (他们 –&gt; 三个人)</td>
+</tr>
+<tr class="even">
+<td>先行关系</td>
+<td>ePrec</td>
+<td>event Precedent</td>
+<td>首先，先</td>
+</tr>
+<tr class="odd">
+<td>顺承关系</td>
+<td>eSucc</td>
+<td>event Successor</td>
+<td>随后，然后</td>
+</tr>
+<tr class="even">
+<td>递进关系</td>
+<td>eProg</td>
+<td>event Progression</td>
+<td>况且，并且</td>
+</tr>
+<tr class="odd">
+<td>转折关系</td>
+<td>eAdvt</td>
+<td>event adversative</td>
+<td>却，然而</td>
+</tr>
+<tr class="even">
+<td>原因关系</td>
+<td>eCau</td>
+<td>event Cause</td>
+<td>因为，既然</td>
+</tr>
+<tr class="odd">
+<td>结果关系</td>
+<td>eResu</td>
+<td>event Result</td>
+<td>因此，以致</td>
+</tr>
+<tr class="even">
+<td>推论关系</td>
+<td>eInf</td>
+<td>event Inference</td>
+<td>才，则</td>
+</tr>
+<tr class="odd">
+<td>条件关系</td>
+<td>eCond</td>
+<td>event Condition</td>
+<td>只要，除非</td>
+</tr>
+<tr class="even">
+<td>假设关系</td>
+<td>eSupp</td>
+<td>event Supposition</td>
+<td>如果，要是</td>
+</tr>
+<tr class="odd">
+<td>让步关系</td>
+<td>eConc</td>
+<td>event Concession</td>
+<td>纵使，哪怕</td>
+</tr>
+<tr class="even">
+<td>手段关系</td>
+<td>eMetd</td>
+<td>event Method</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>目的关系</td>
+<td>ePurp</td>
+<td>event Purpose</td>
+<td>为了，以便</td>
+</tr>
+<tr class="even">
+<td>割舍关系</td>
+<td>eAban</td>
+<td>event Abandonment</td>
+<td>与其，也不</td>
+</tr>
+<tr class="odd">
+<td>选取关系</td>
+<td>ePref</td>
+<td>event Preference</td>
+<td>不如，宁愿</td>
+</tr>
+<tr class="even">
+<td>总括关系</td>
+<td>eSum</td>
+<td>event Summary</td>
+<td>总而言之</td>
+</tr>
+<tr class="odd">
+<td>分叙关系</td>
+<td>eRect</td>
+<td>event Recount</td>
+<td>例如，比方说</td>
+</tr>
+<tr class="even">
+<td>连词标记</td>
+<td>mConj</td>
+<td>Recount Marker</td>
+<td>和，或</td>
+</tr>
+<tr class="odd">
+<td>的字标记</td>
+<td>mAux</td>
+<td>Auxiliary</td>
+<td>的，地，得</td>
+</tr>
+<tr class="even">
+<td>介词标记</td>
+<td>mPrep</td>
+<td>Preposition</td>
+<td>把，被</td>
+</tr>
+<tr class="odd">
+<td>语气标记</td>
+<td>mTone</td>
+<td>Tone</td>
+<td>吗，呢</td>
+</tr>
+<tr class="even">
+<td>时间标记</td>
+<td>mTime</td>
+<td>Time</td>
+<td>才，曾经</td>
+</tr>
+<tr class="odd">
+<td>范围标记</td>
+<td>mRang</td>
+<td>Range</td>
+<td>都，到处</td>
+</tr>
+<tr class="even">
+<td>程度标记</td>
+<td>mDegr</td>
+<td>Degree</td>
+<td>很，稍微</td>
+</tr>
+<tr class="odd">
+<td>频率标记</td>
+<td>mFreq</td>
+<td>Frequency Marker</td>
+<td>再，常常</td>
+</tr>
+<tr class="even">
+<td>趋向标记</td>
+<td>mDir</td>
+<td>Direction Marker</td>
+<td>上去，下来</td>
+</tr>
+<tr class="odd">
+<td>插入语标记</td>
+<td>mPars</td>
+<td>Parenthesis Marker</td>
+<td>总的来说，众所周知</td>
+</tr>
+<tr class="even">
+<td>否定标记</td>
+<td>mNeg</td>
+<td>Negation Marker</td>
+<td>不，没，未</td>
+</tr>
+<tr class="odd">
+<td>情态标记</td>
+<td>mMod</td>
+<td>Modal Marker</td>
+<td>幸亏，会，能</td>
+</tr>
+<tr class="even">
+<td>标点标记</td>
+<td>mPunc</td>
+<td>Punctuation Marker</td>
+<td>，。！</td>
+</tr>
+<tr class="odd">
+<td>重复标记</td>
+<td>mPept</td>
+<td>Repetition Marker</td>
+<td>走啊走 (走 –&gt; 走)</td>
+</tr>
+<tr class="even">
+<td>多数标记</td>
+<td>mMaj</td>
+<td>Majority Marker</td>
+<td>们，等</td>
+</tr>
+<tr class="odd">
+<td>实词虚化标记</td>
+<td>mVain</td>
+<td>Vain Marker</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>离合标记</td>
+<td>mSepa</td>
+<td>Seperation Marker</td>
+<td>吃了个饭 (吃 –&gt; 饭) 洗了个澡 (洗 –&gt; 澡)</td>
+</tr>
+<tr class="odd">
+<td>根节点</td>
+<td>Root</td>
+<td>Root</td>
+<td>全句核心节点</td>
+</tr>
+</tbody>
+</table>
+<p>目前中文语义依存分析准确率并不高，大概只有60%，英文有85%，还不到生产可用的地步。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p><a href="https://www.cnblogs.com/CheeseZH/p/5768389.html">依存句法分析与语义依存分析的区别</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩</a></p></li>
+</ol>
+</section>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>聚类</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">聚类</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#k-means"><span class="toc-section-number">1</span> K-Means</a><ul>
+<li><a href="#到质心的距离"><span class="toc-section-number">1.1</span> 到质心的距离</a></li>
+<li><a href="#算法"><span class="toc-section-number">1.2</span> 算法</a></li>
+</ul></li>
+<li><a href="#gmm"><span class="toc-section-number">2</span> GMM</a><ul>
+<li><a href="#算法定义"><span class="toc-section-number">2.1</span> 算法定义</a></li>
+<li><a href="#先验知识"><span class="toc-section-number">2.2</span> 先验知识</a><ul>
+<li><a href="#最大似然估计"><span class="toc-section-number">2.2.1</span> 最大似然估计</a></li>
+<li><a href="#em算法"><span class="toc-section-number">2.2.2</span> EM算法</a></li>
+</ul></li>
+<li><a href="#算法过程"><span class="toc-section-number">2.3</span> 算法过程</a></li>
+</ul></li>
+<li><a href="#dbscan"><span class="toc-section-number">3</span> DBSCAN</a><ul>
+<li><a href="#原理"><span class="toc-section-number">3.1</span> 原理</a></li>
+<li><a href="#密度定义"><span class="toc-section-number">3.2</span> 密度定义</a></li>
+<li><a href="#聚类思想"><span class="toc-section-number">3.3</span> 聚类思想</a></li>
+<li><a href="#算法-1"><span class="toc-section-number">3.4</span> 算法</a></li>
+</ul></li>
+<li><a href="#参考"><span class="toc-section-number">4</span> 参考</a></li>
+</ul>
+</nav>
+<p>所谓聚类问题，就是给定一个元素集合D，其中每个元素具有n个可观察属性，使用某种算法将D划分成k个子集，要求每个子集内部的元素之间相异度尽可能低，而不同子集的元素相异度尽可能高。其中每个子集叫做一个簇。</p>
+<h1 id="k-means"><span class="header-section-number">1</span> K-Means</h1>
+<h2 id="到质心的距离"><span class="header-section-number">1.1</span> 到质心的距离</h2>
+<ol type="1">
+<li>Minkowski Distance :: <span class="math inline">\(d_{ij}=\sqrt{\lambda}{\sum_{k=1}^{N}|x_{ik}-x_{jk}|^{\lambda}}\)</span></li>
+<li>Euclidean Distance :: Minkowski Distance中的 <span class="math inline">\(\lambda=2\)</span></li>
+<li>Manhattan Distance :: Minkowski Distance中的 <span class="math inline">\(\lambda=1\)</span></li>
+</ol>
+<p>以上的距离计算方式有一个最大的问题是取值范围大的属性对距离的影响大于取值范围小的属性。常用的做法是需要将距离进行归一化： <span class="math inline">\(a_i^&#39;=\frac{a_i-min(a_i)}{max(a_i)-min(a_i)}\)</span></p>
+<p>而对于不仅有大小还有方向的向量，再使用传统的距离来度量相异度不是一个好的办法，一种计算方式是用两个向量的余弦来进行度量： <span class="math inline">\(s(X,y)=\frac{X^tY}{{\Arrowvert}X{\Arrowvert}{\Arrowvert}Y{\Arrowvert}}\)</span></p>
+<h2 id="算法"><span class="header-section-number">1.2</span> 算法</h2>
+<hr />
+<p><strong>K-Means 算法:</strong></p>
+<ol type="1">
+<li>随机选择k个样本作为初始的质心；</li>
+<li>计算剩下元素到这k个质心的相异度，并划分到相异度最低的簇；</li>
+<li>重新计算k个簇的质心；</li>
+<li>将样本集中所有点以新的质心为中心点重新进行计算；</li>
+<li>重新计算3、4步，直到聚类结果不再变化；</li>
+</ol>
+<hr />
+<h1 id="gmm"><span class="header-section-number">2</span> GMM</h1>
+<h2 id="算法定义"><span class="header-section-number">2.1</span> 算法定义</h2>
+<p>对样本的概率密度分布进行估计，而估计的模型是几个高斯模型加权之和，每个高斯模型代表了一个类，对样本中国年的数据分别在几个高斯模型上进行投影，就会得到在各个类上的概率，然后选取概率最大的类作为聚类结果。</p>
+<p>理论上，可以通过增加model的个数，用GMM近似任何概率分布。通常用于解决同一集合下的数据包含多个不同的分布的情况（或者同一类分布但参数不同）。</p>
+<p>其数学定义为： <span class="math inline">\(p(x)=\sum_{k=1}^{K}{{\pi_k}p(x|k)}\)</span> 其中K为模型的个数， <span class="math inline">\(\pi_k\)</span> 为第k个高斯模型的权重， <span class="math inline">\(p(x|k)\)</span> 为第k个高斯的概率密度函数，且其均值为 <span class="math inline">\(\mu_k\)</span> ，方差为 <span class="math inline">\(\sigma_k\)</span> 。对此概率密度的估计就是要求 <span class="math inline">\(\pi_k\)</span> 、 <span class="math inline">\(\mu_k\)</span> 、 <span class="math inline">\(*σ*_k\)</span>各个变量。</p>
+<h2 id="先验知识"><span class="header-section-number">2.2</span> 先验知识</h2>
+<h3 id="最大似然估计"><span class="header-section-number">2.2.1</span> 最大似然估计</h3>
+<p>最大似然估计（MLE）的目的是利用已知样本结果，反推最有可能导致这样结果的参数值。即“模型已定，参数未知”，通过若干次实验，观察其结果，利用实验结果得到某个参数值能够使得样本出现的概率为最大。</p>
+<h3 id="em算法"><span class="header-section-number">2.2.2</span> EM算法</h3>
+<p>EM（exceptation maximization algorithm）算法的每次迭代由两步组成：</p>
+<ul>
+<li>E步，求期望（exceptation）；</li>
+<li>M步，求极大（maximization）。</li>
+</ul>
+<p>其大致过程是对于待确定的参数选定一个初始值，然后以此计算结果，和真实的样本进行对比，反过来估计待确定的参数，重复多次，直至稳定。</p>
+<hr />
+<p>EM算法在GMM中的流程为：</p>
+<ol type="1">
+<li>对于第i个样本 <span class="math inline">\(x_i\)</span> 来说，它由第k个model生成的概率为： <span class="math inline">\(w_i(k)=\frac{\pi_kN(x_i|\mu_k,\sigma_k)}{\sum_{j=1}^K{\pi_jN(x_i|\mu_j,\sigma_j)}}\)</span></li>
+<li>得到每个点的 <span class="math inline">\(w_i(k)\)</span> 后，可以这样考虑：对样本 <span class="math inline">\(x_i\)</span> 来说，它的 <span class="math inline">\(w_i(k)x_i\)</span> 的值是由第k个高斯模型产生的，即第k个高斯模型产生了 <span class="math inline">\(w_i(k)x_i,(i=1,{\cdots}N)\)</span> 这些数据。估计第k个高斯模型的参数时，我们就用 <span class="math inline">\(w_i(k)x_i,(i=1,{\cdots}N)\)</span> 这些数据去做最大似然参数估计；</li>
+<li>重复以上两步直至算法收敛。</li>
+</ol>
+<hr />
+<h2 id="算法过程"><span class="header-section-number">2.3</span> 算法过程</h2>
+<p>GMM的原始形式为： <span class="math inline">\(p(x)=\sum_{k=1}^{K}\pi_kp(x|k)\)</span> 其中 <span class="math inline">\(\pi_k\)</span> 为第k类被选中的概率，引入一个新的K维随机变量 <span class="math inline">\(z_k,z_k\in{\{0,1\}}且\sum_K{z_k}=1\)</span> ， <span class="math inline">\(z_k=1\)</span> 表示第k类被选中，则其概率为 <span class="math inline">\(p(z_k=1)=\pi_k\)</span> 。例如，对于有两个类，如果是从第一个类中选择一个点，则 <span class="math inline">\(z=(1,0)\)</span> ，如果从第二类中取出一个点，则 <span class="math inline">\(z=(0,1)\)</span> 。</p>
+<p>如果 <span class="math inline">\(z_k\)</span> 之间是独立同分布的（iid）,那么z的联合概率分布为： <span class="math inline">\(p(z)=p(z_1)p(z_2)...p(z_K)=\prod_{k=1}^{K}\pi_k^{z_k}\)</span> 由于每一个类中的数据都是正态分布的，因此 <span class="math inline">\(p(x|z_k=1)=\mathcal{N}(x|\mu_k,\Sigma/k)\)</span> 进而 <span class="math inline">\(p(x|z)=\prod/{k=1}^{K}\mathcal{N}(x|\mu_k,\Sigma/k)^{{z_k}}\)</span> 根据条件概率公式，可得 <span class="math inline">\(p(x)\)</span> 的形式为： <span class="math inline">\(p(x)=\sum/{z}p(z)p(x|z)=\sum/{i=1}{K}\pi/{k}\mathcal{N}(x|\mu_k,\Sigma_k)\)</span> 这里需要注意的是这里有一个隐含变量z，其含义是我们的数据可以分成K类，但是随机抽取一个点，我们并不知道这个数据点是属于哪个类，这个不确定用z来进行描述。</p>
+<p>根据贝叶斯公式， <span class="math inline">\(p(z)\)</span> 是先验概率， <span class="math inline">\(p(x|z)\)</span> 是似然概率，则后验概率 <span class="math inline">\(p(z|x)\)</span> 为： <span class="math inline">\(\gamma(z_k)=p(z_k=1|x)=\frac{p(z_k=1)p(x|z_k=1)}{p(x,z_k=1)}=\frac{p(z_k=1)p(x|z_k=1)}{\sum_{j=1}^{K}p(z_j=1)p(x|z_j=1)}=\frac{\pi_k\mathcal{N}(x|\mu_k,\Sigma_k)}{\sum_{j=1}^{K}\pi_j\mathcal{N}(x|\mu_j,\Sigma_j)}\)</span> 使用符号 <span class="math inline">\(\gamma(z_k)\)</span> 来表示第k个分量的后验概率。</p>
+<p>最终的式子中，有三个参数需要使用EM算法进行估计，分别是 <span class="math inline">\(\pi\)</span> 、 <span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\Sigma\)</span> 。</p>
+<h1 id="dbscan"><span class="header-section-number">3</span> DBSCAN</h1>
+<p>DBSCAN(Density-Based Spatial Clustering of Applications with Noise，具有噪声的基于密度的聚类方法)是一种很典型的密度聚类算法，和K-Means，BIRCH这些一般只适用于凸样本集的聚类相比，DBSCAN既可以适用于凸样本集，也可以适用于非凸样本集。</p>
+<h2 id="原理"><span class="header-section-number">3.1</span> 原理</h2>
+<p>基于这样的假设，同一类别的样本之间是紧密相连的。</p>
+<h2 id="密度定义"><span class="header-section-number">3.2</span> 密度定义</h2>
+<p>假设样本集 <span class="math inline">\(D=(x_1,x_2,...,x_m)\)</span> ，DBSCAN具体的密度描述定义如下：</p>
+<ol type="1">
+<li><span class="math inline">\(\epsilon\)</span> -领域：对于 <span class="math inline">\({x_j}\in{D}\)</span> ，其中 <span class="math inline">\(\epsilon\)</span> -领域包含样本集D中与 <span class="math inline">\(x_j\)</span> 的距离不大于 <span class="math inline">\(\epsilon\)</span> 的子样本集，即 <span class="math inline">\(N_\epsilon(x_j)={x_i{\in}D|distance(x_i,x_j)\le{\epsilon}}\)</span> ，这样的子样本集的个数记为 <span class="math inline">\(|N_\epsilon(x_j)|\)</span> ；</li>
+<li>核心对象：任一样本的 <span class="math inline">\(\epsilon\)</span> -领域中至少包含MinPts个样本，则 <span class="math inline">\(x_j\)</span> 是核心对象；</li>
+<li>密度直达：如果 <span class="math inline">\(x_i\)</span> 位于 <span class="math inline">\(x_j\)</span> 的 <span class="math inline">\(\epsilon\)</span> -领域中，且 <span class="math inline">\(x_j\)</span> 是核心对象，则称 <span class="math inline">\(x_i\)</span> 由 <span class="math inline">\(x_j\)</span> 密度直达；</li>
+<li>密度可达：在一对密度直达关系 <span class="math inline">\(x_i\)</span> 和 <span class="math inline">\(x_j\)</span> 中，如果 <span class="math inline">\(x_k\)</span> 由 <span class="math inline">\(x_i\)</span> 密度直达，则称 <span class="math inline">\(x_k\)</span> 由 <span class="math inline">\(x_j\)</span> 密度可达；</li>
+<li>密度相连：对于 <span class="math inline">\(x_i\)</span> 和 <span class="math inline">\(x_j\)</span> ，如果有一个核心样本对象 <span class="math inline">\(x_k\)</span> ，使得 <span class="math inline">\(x_i\)</span> 和 <span class="math inline">\(x_j\)</span> 均由 <span class="math inline">\(x_k\)</span> 密度可达，则称 <span class="math inline">\(x_i\)</span> 和 <span class="math inline">\(x_j\)</span> 密度相连。</li>
+</ol>
+<h2 id="聚类思想"><span class="header-section-number">3.3</span> 聚类思想</h2>
+<p>由密度可达关系导出最大密度相连的样本集合，即为最终聚类的一个类别。首先任意选择一个没有类别的核心对象最为种子，然后找到所有这个核心对象能够密度可达的样本集合，接着选择另一个没有类别的核心对象去寻找密度可达的样本集合，一直运行到所有核心对象都有类别为止。</p>
+<h2 id="算法-1"><span class="header-section-number">3.4</span> 算法</h2>
+<hr />
+<p><strong>DBSCAN 算法:</strong></p>
+<ol type="1">
+<li>首先通过距离度量的方式遍历所有的点，寻找出所有的核心对象；</li>
+<li>随机选择一个核心对象，以密度可达为条件，构建当前蔟；</li>
+</ol>
+<hr />
+<h1 id="参考"><span class="header-section-number">4</span> 参考</h1>
+<ul>
+<li><a href="https://www.zhihu.com/question/34554321">用于数据挖掘的聚类算法有哪些，各有何优势？</a></li>
+<li><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/20/k-means.html">算法杂货铺——k均值聚类(K-means)</a></li>
+<li>《统计学习方法》</li>
+<li><a href="https://blog.csdn.net/jinping_shi/article/details/59613054">高斯混合模型（GMM）及其EM算法的理解</a></li>
+<li><a href="https://www.cnblogs.com/pinard/p/6208966.html">DBSCAN密度聚类算法</a></li>
+</ul>
+</body>
+</html>

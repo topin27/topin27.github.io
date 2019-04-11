@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Hoeffding 不等式</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Hoeffding 不等式</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#实例化解释"><span class="toc-section-number">1</span> 实例化解释</a></li>
+</ul>
+</nav>
+<h1 id="实例化解释"><span class="header-section-number">1</span> 实例化解释</h1>
+<p>假设有一个罐子装满了橙色和绿色的球，其中橙色球的比例为<span class="math inline">\(\mu\)</span>，为了估计罐中橙色球的比例，随机取出N个球作为样本，这N个球中橙色球的比例为<span class="math inline">\(\upsilon\)</span>，而我们对真实比例<span class="math inline">\(\mu\)</span>和样本比例<span class="math inline">\(\upsilon\)</span>的差异容忍度为<span class="math inline">\(\epsilon\)</span>，则有如下不等式成立：<span class="math inline">\(P[|\upsilon-\mu|&gt;\epsilon]{\le}2exp(-w\epsilon^2N)\)</span>即存在一个概率上届，只要样本容量N足够大，就能使“<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\upsilon\)</span>的差异很大”这个事件的概率很小。</p>
+</body>
+</html>

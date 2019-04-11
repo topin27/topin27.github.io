@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Notes about gensim</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Notes about gensim</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#word2vec"><span class="toc-section-number">1</span> word2vec</a><ul>
+<li><a href="#训练"><span class="toc-section-number">1.1</span> 训练</a></li>
+<li><a href="#增量训练"><span class="toc-section-number">1.2</span> 增量训练</a></li>
+<li><a href="#参考"><span class="toc-section-number">1.3</span> 参考</a></li>
+</ul></li>
+<li><a href="#doc2vec"><span class="toc-section-number">2</span> doc2vec</a></li>
+<li><a href="#footnotes"><span class="toc-section-number">3</span> Footnotes</a></li>
+</ul>
+</nav>
+<h1 id="word2vec"><span class="header-section-number">1</span> word2vec</h1>
+<p>进入gensim的word2vec模块训练的数据需要首先预处理好分好词，由于word2vec算法依赖于上下文，而上下文可能就是停用词，因此对于word2vec，我们不去除停用词[1]。</p>
+<h2 id="训练"><span class="header-section-number">1.1</span> 训练</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1">    sentences <span class="op">=</span> word2vec.LineSentence(<span class="st">&#39;/path/to/segment/corpus&#39;</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2">    model <span class="op">=</span> word2vec.Word2Vec(sentences, hs<span class="op">=</span><span class="dv">1</span>,min_count<span class="op">=</span><span class="dv">1</span>,window<span class="op">=</span><span class="dv">3</span>,size<span class="op">=</span><span class="dv">100</span>)</a></code></pre></div>
+<p>现实中的参数需要自调。</p>
+<h2 id="增量训练"><span class="header-section-number">1.2</span> 增量训练</h2>
+<p>gensim的word2vec模型支持online learning:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1">    model <span class="op">=</span> gensim.models.Word2Vec.load(<span class="st">&#39;/path/to/model&#39;</span>)</a>
+<a class="sourceLine" id="cb2-2" title="2">    model.train(more_sentences)</a></code></pre></div>
+<h2 id="参考"><span class="header-section-number">1.3</span> 参考</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/pinard/p/7278324.html">用gensim学习word2vec</a></li>
+</ul>
+<h1 id="doc2vec"><span class="header-section-number">2</span> doc2vec</h1>
+<p>具体使用见文档。</p>
+<h1 id="footnotes"><span class="header-section-number">3</span> Footnotes</h1>
+<ol type="1">
+<li><a href="http://www.cnblogs.com/pinard/p/7278324.html">用gensim学习word2vec</a></li>
+</ol>
+</body>
+</html>

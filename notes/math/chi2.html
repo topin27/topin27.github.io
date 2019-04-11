@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>\chi^2 检验/分布相关</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><span class="math inline">\(\chi^2\)</span> 检验/分布相关</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#chi2-检验"><span class="toc-section-number">1</span> <span class="math inline">\(\chi^2\)</span> 检验</a><ul>
+<li><a href="#举例"><span class="toc-section-number">1.1</span> 举例</a></li>
+<li><a href="#参考"><span class="toc-section-number">1.2</span> 参考</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="chi2-检验"><span class="header-section-number">1</span> <span class="math inline">\(\chi^2\)</span> 检验</h1>
+<p>主要用于衡量理论值与实际值之间的差异程度。</p>
+<p><span class="math display">\[\chi^2={\sum}\frac{(A-T)^2}{T}\]</span> 其中 <span class="math inline">\(A\)</span> 为实际值，<span class="math inline">\(T\)</span> 为理论值。</p>
+<p>计算出 <span class="math inline">\(\chi^2\)</span> 值之后，根据 <span class="math inline">\(\chi^2\)</span> 分布可以知道 <span class="math inline">\(\chi^2\)</span> 值对应的 <span class="math inline">\(\chi^2\)</span> 分布概率，即是两者相关的概率。</p>
+<h2 id="举例"><span class="header-section-number">1.1</span> 举例</h2>
+<p>假设要判断文章包含<code>关键词</code>是否与该文章属于<code>类别</code>有关，根据统计信息可得以下表格：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">组别</th>
+<th style="text-align: right;">属于<code>类别</code></th>
+<th style="text-align: right;">不属于<code>类别</code></th>
+<th style="text-align: right;">合计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">不包含<code>关键词</code></td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">包含<code>关键词</code></td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">合计</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">87</td>
+</tr>
+</tbody>
+</table>
+<p>从该表格来说，包含<code>关键词</code>确实属于<code>类别</code>的概率更高，但是仍有可能是由于抽样误差导致，那可以假设包含<code>关键词</code>与文章属于<code>类别</code>独立无关。而随机抽取一条数据，属于<code>类别</code>的概率是：</p>
+<p><span class="math display">\[\frac{19+34}{19+34+24+10}=60.9\%\]</span></p>
+<p>基于该概率，可以生成理论值：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">组别</th>
+<th style="text-align: right;">属于<code>类别</code></th>
+<th style="text-align: right;">不属于<code>类别</code></th>
+<th style="text-align: right;">合计</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">不包含<code>关键词</code></td>
+<td style="text-align: right;">19*0.609=26.2</td>
+<td style="text-align: right;">24*0.391=16.8</td>
+<td style="text-align: right;">43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">包含<code>关键词</code></td>
+<td style="text-align: right;">34*0.609=26.8</td>
+<td style="text-align: right;">10*0.391=17.2</td>
+<td style="text-align: right;">44</td>
+</tr>
+</tbody>
+</table>
+<p>计算两个表格表示的实际值和理论值之间的 <span class="math inline">\(\chi^2\)</span> 值为 10.01。根据 <span class="math inline">\(\chi^2\)</span> 分布可以得到<code>关键词</code>和<code>类别</code>无关的可能性小于 <span class="math inline">\(0.5\%\)</span>。</p>
+<h2 id="参考"><span class="header-section-number">1.2</span> 参考</h2>
+<ul>
+<li><a href="卡方检验的原理及应用">卡方检验的原理及应用</a></li>
+</ul>
+</body>
+</html>

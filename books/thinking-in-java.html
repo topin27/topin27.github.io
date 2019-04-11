@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Thinking in Java</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Thinking in Java</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#operators"><span class="toc-section-number">1</span> Operators</a><ul>
+<li><a href="#relation-operators"><span class="toc-section-number">1.1</span> Relation operators</a></li>
+</ul></li>
+<li><a href="#initialization-cleanup"><span class="toc-section-number">2</span> Initialization &amp; Cleanup</a><ul>
+<li><a href="#constructor-initialization"><span class="toc-section-number">2.1</span> Constructor initialization</a><ul>
+<li><a href="#order-of-initialization"><span class="toc-section-number">2.1.1</span> Order of initialization</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#reusing-classes"><span class="toc-section-number">3</span> Reusing Classes</a><ul>
+<li><a href="#the-final-keyword"><span class="toc-section-number">3.1</span> The <code>final</code> keyword</a><ul>
+<li><a href="#final-data"><span class="toc-section-number">3.1.1</span> <code>final</code> data</a></li>
+<li><a href="#final-arguments"><span class="toc-section-number">3.1.2</span> <code>final</code> arguments</a></li>
+<li><a href="#final-methods"><span class="toc-section-number">3.1.3</span> <code>final</code> methods</a></li>
+<li><a href="#final-classes"><span class="toc-section-number">3.1.4</span> <code>final</code> classes</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#polymorphism"><span class="toc-section-number">4</span> Polymorphism</a><ul>
+<li><a href="#the-twist"><span class="toc-section-number">4.1</span> The twist</a><ul>
+<li><a href="#method-call-binding"><span class="toc-section-number">4.1.1</span> Method-call binding</a></li>
+<li><a href="#pitfall-overriding-private-methods"><span class="toc-section-number">4.1.2</span> Pitfall: “overriding” <strong>private</strong> methods</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#interfaces"><span class="toc-section-number">5</span> Interfaces</a><ul>
+<li><a href="#extending-an-interface-with-inheritance"><span class="toc-section-number">5.1</span> Extending an interface with inheritance</a><ul>
+<li><a href="#name-collisions-when-combining-interfaces"><span class="toc-section-number">5.1.1</span> Name collisions when combining interfaces</a></li>
+</ul></li>
+<li><a href="#fields-in-interfaces"><span class="toc-section-number">5.2</span> Fields in interfaces</a></li>
+</ul></li>
+<li><a href="#error-handling-with-exceptions"><span class="toc-section-number">6</span> Error Handling with Exceptions</a><ul>
+<li><a href="#with-finally"><span class="toc-section-number">6.1</span> with <code>finally</code></a><ul>
+<li><a href="#pitfall-the-lost-exception"><span class="toc-section-number">6.1.1</span> Pitfall: the lost exception</a></li>
+</ul></li>
+<li><a href="#exception-restrictions"><span class="toc-section-number">6.2</span> Exception restrictions</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="operators"><span class="header-section-number">1</span> Operators</h1>
+<h2 id="relation-operators"><span class="header-section-number">1.1</span> Relation operators</h2>
+<p>java中的 <code>==</code> 操作符直接比较引用，通常使用类的 <code>.equals()</code> 方法来进行值比较，如果需要自定义类，如果没有重定义相应的方法，默认仍然是引用比较。</p>
+<h1 id="initialization-cleanup"><span class="header-section-number">2</span> Initialization &amp; Cleanup</h1>
+<h2 id="constructor-initialization"><span class="header-section-number">2.1</span> Constructor initialization</h2>
+<h3 id="order-of-initialization"><span class="header-section-number">2.1.1</span> Order of initialization</h3>
+<p>类的初始化顺序和声明顺序相同，同时类中变量的初始化先于方法（包括构造函数）的初始化。静态变量的初始化开始于该类第一个实例的初始化（并且先于该类非static变量的初始化），如果该类还没有实例，那么第一次调用该类的static变量时会自动初始化。</p>
+<h1 id="reusing-classes"><span class="header-section-number">3</span> Reusing Classes</h1>
+<h2 id="the-final-keyword"><span class="header-section-number">3.1</span> The <code>final</code> keyword</h2>
+<h3 id="final-data"><span class="header-section-number">3.1.1</span> <code>final</code> data</h3>
+<p><code>final</code> 修饰的变量如果是内建类型，则表示该变量是一个常量，如果修饰的类型是一个类，则表示的该类实例的引用是不可变的（即不可再指向其他实例）。</p>
+<h3 id="final-arguments"><span class="header-section-number">3.1.2</span> <code>final</code> arguments</h3>
+<p><code>final</code> 如果修饰函数参数，则表示函数内该参数不能被修改。</p>
+<h3 id="final-methods"><span class="header-section-number">3.1.3</span> <code>final</code> methods</h3>
+<p>表明该函数无法再被重载。</p>
+<h3 id="final-classes"><span class="header-section-number">3.1.4</span> <code>final</code> classes</h3>
+<p>表明该函数无法被继承。</p>
+<h1 id="polymorphism"><span class="header-section-number">4</span> Polymorphism</h1>
+<h2 id="the-twist"><span class="header-section-number">4.1</span> The twist</h2>
+<h3 id="method-call-binding"><span class="header-section-number">4.1.1</span> Method-call binding</h3>
+<p>java中除开 <code>static</code> 和 <code>final</code> 关键字指定的函数，所有的函数绑定都是late binding。</p>
+<h3 id="pitfall-overriding-private-methods"><span class="header-section-number">4.1.2</span> Pitfall: “overriding” <strong>private</strong> methods</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb1-1" title="1"></a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">public</span> <span class="kw">class</span> PrivateOverride {</a>
+<a class="sourceLine" id="cb1-3" title="3">      <span class="kw">private</span> <span class="dt">void</span> <span class="fu">f</span>() {<span class="fu">print</span>(<span class="st">&quot;private f()&quot;</span>;}</a>
+<a class="sourceLine" id="cb1-4" title="4">      <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</a>
+<a class="sourceLine" id="cb1-5" title="5">        PrivateOverride po = <span class="kw">new</span> <span class="fu">Derived</span>();</a>
+<a class="sourceLine" id="cb1-6" title="6">        po.<span class="fu">f</span>();</a>
+<a class="sourceLine" id="cb1-7" title="7">      }</a>
+<a class="sourceLine" id="cb1-8" title="8">    }</a>
+<a class="sourceLine" id="cb1-9" title="9"></a>
+<a class="sourceLine" id="cb1-10" title="10">    <span class="kw">class</span> Derived <span class="kw">extends</span> PrivateOverride {</a>
+<a class="sourceLine" id="cb1-11" title="11">      <span class="kw">public</span> <span class="dt">void</span> <span class="fu">f</span>() {<span class="fu">print</span>(<span class="st">&quot;public f()&quot;</span>);}</a>
+<a class="sourceLine" id="cb1-12" title="12">    }</a>
+<a class="sourceLine" id="cb1-13" title="13"></a>
+<a class="sourceLine" id="cb1-14" title="14">    <span class="co">/*output:</span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="co">    private f()</span></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="co">    */</span></a></code></pre></div>
+<h1 id="interfaces"><span class="header-section-number">5</span> Interfaces</h1>
+<h2 id="extending-an-interface-with-inheritance"><span class="header-section-number">5.1</span> Extending an interface with inheritance</h2>
+<p>interface之间也可以相互继承</p>
+<h3 id="name-collisions-when-combining-interfaces"><span class="header-section-number">5.1.1</span> Name collisions when combining interfaces</h3>
+<p>类继承关系之间的函数overloaded不会出问题，但是interface继承关系之间即便函数名字相同都会出现冲突。</p>
+<h2 id="fields-in-interfaces"><span class="header-section-number">5.2</span> Fields in interfaces</h2>
+<p>interface中的任何变量都自动转换为static和final。</p>
+<h1 id="error-handling-with-exceptions"><span class="header-section-number">6</span> Error Handling with Exceptions</h1>
+<h2 id="with-finally"><span class="header-section-number">6.1</span> with <code>finally</code></h2>
+<h3 id="pitfall-the-lost-exception"><span class="header-section-number">6.1.1</span> Pitfall: the lost exception</h3>
+<p>如果一个try块抛出了异常，进入了finally块，并且很不幸的finally块中也抛出了异常，那么上层在捕获的时候，finally块中抛出的异常会覆盖掉try块中的异常，此为“lost exception”。</p>
+<h2 id="exception-restrictions"><span class="header-section-number">6.2</span> Exception restrictions</h2>
+<p>When you override a method, you can throw only the exceptions that have been specified in the base-class version of the method. This is a useful restriction, since it means that code that works with the base class will automatically work with any object derived from the base class, including exceptions.</p>
+</body>
+</html>

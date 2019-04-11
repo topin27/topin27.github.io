@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>情感分析相关</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="/static/custom.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">情感分析相关</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#another-twitter-sentiment-analysis-with-python"><span class="toc-section-number">1</span> Another Twitter sentiment analysis with Python</a><ul>
+<li><a href="#数据清理"><span class="toc-section-number">1.1</span> 数据清理</a></li>
+<li><a href="#可视化"><span class="toc-section-number">1.2</span> 可视化</a><ul>
+<li><a href="#tweet-tokens-visualisation"><span class="toc-section-number">1.2.1</span> Tweet Tokens Visualisation</a></li>
+</ul></li>
+<li><a href="#建模"><span class="toc-section-number">1.3</span> 建模</a><ul>
+<li><a href="#feature-selection"><span class="toc-section-number">1.3.1</span> Feature Selection</a></li>
+<li><a href="#模型"><span class="toc-section-number">1.3.2</span> 模型</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="another-twitter-sentiment-analysis-with-python"><span class="header-section-number">1</span> Another Twitter sentiment analysis with Python</h1>
+<p>全文分成了多个部分：</p>
+<ul>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-bb5b01ebad90">Part 1</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-2-333514854913">Part 2</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-3-zipfs-law-data-visualisation-fc9eadda71e7">Part 3: Zipf’s Law, data visualisation</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-4-count-vectorizer-b3f4944e51b5">Part 4: Count vectorizer, confusion matrix</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-5-50b4e87d9bdd">Part 5: Tfidf vectorizer, model comparison, lexical approach</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-6-doc2vec-603f11832504">Part 6: Doc2Vec</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-7-phrase-modeling-doc2vec-592a8a996867">Part 7: Phrase modeling + Doc2Vec</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-8-dimensionality-reduction-chi2-pca-c6d06fb3fcf3">Part 8: Dimensionality reduction: Chi2, PCA</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-9-neural-networks-with-tfidf-vectors-using-d0b4af6be6d7">Part 9: Neural Networks with Tfidf vectors using Keras</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-10-neural-network-with-a6441269aa3c">Part 10: Neural Network with Doc2Vec/Word2Vec/GloVe</a></li>
+<li><a href="https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-11-cnn-word2vec-41f5e28eda74">Part 11: CNN + Word2Vec</a></li>
+</ul>
+<p>使用的数据来源于 <a href="http://help.sentiment140.com/for-students/">Sentiment140</a>。</p>
+<h2 id="数据清理"><span class="header-section-number">1.1</span> 数据清理</h2>
+<p>主要做了以下清理：</p>
+<ul>
+<li>HTML decoding；</li>
+<li><span class="citation" data-cites="用户清理">@用户清理</span>；</li>
+<li>去除URL（使用两个正则模式： <code>'https?://\[A-Za-z0-9./\]+'</code> 和 <code>r'www.[^ ]+'</code> ）；</li>
+<li>UTF-8 BOM转换；</li>
+<li>热点话题符号（#）以及数字、标点符号去除（正则模式： <code>re.sub("[^a-zA-Z]", " ", df.text[175])</code> ）</li>
+<li>否定词处理（定义一个dict，将如<code>can't</code>的词转换为<code>can not</code>）</li>
+</ul>
+<h2 id="可视化"><span class="header-section-number">1.2</span> 可视化</h2>
+<p>使用wordcloud来对词的使用进行visualisation：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1">    neg_tweets <span class="op">=</span> my_df[my_df.target <span class="op">==</span> <span class="dv">0</span>]</a>
+<a class="sourceLine" id="cb1-2" title="2">    neg_string <span class="op">=</span> []</a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="cf">for</span> t <span class="kw">in</span> neg_tweets.text:</a>
+<a class="sourceLine" id="cb1-4" title="4">        neg_string.append(t)</a>
+<a class="sourceLine" id="cb1-5" title="5">        neg_string <span class="op">=</span> pd.Series(neg_string).<span class="bu">str</span>.cat(sep<span class="op">=</span><span class="st">&#39; &#39;</span>)</a>
+<a class="sourceLine" id="cb1-6" title="6"></a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="im">from</span> wordcloud <span class="im">import</span> WordCloud</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9">    wordcloud <span class="op">=</span> WordCloud(width<span class="op">=</span><span class="dv">1600</span>, height<span class="op">=</span><span class="dv">800</span>,max_font_size<span class="op">=</span><span class="dv">200</span>).generate(neg_string)</a>
+<a class="sourceLine" id="cb1-10" title="10">    plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb1-11" title="11">    plt.imshow(wordcloud, interpolation<span class="op">=</span><span class="st">&quot;bilinear&quot;</span>)</a>
+<a class="sourceLine" id="cb1-12" title="12">    plt.axis(<span class="st">&quot;off&quot;</span>)</a>
+<a class="sourceLine" id="cb1-13" title="13">    plt.show()</a></code></pre></div>
+<p>通过词云观察后，可以对数据情感词分布有个大致的了解。</p>
+<p>Zipf’s Law:</p>
+<blockquote>
+<p>Zipf’s Law states that a small number of words are used all the time, while the vast majority are used very rarely. There is nothing surprising about this, we know that we use some of the words very frequently, such as “the”, “of”, etc, and we rarely use the words like “aardvark” (aardvark is an animal species native to Africa). However, what’s interesting is that “given some corpus of natural language utterances, the frequency of any word is inversely proportional to its rank in the frequency table. Thus the most frequent word will occur approximately twice as often as the second most frequent word, three times as often as the third most frequent word, etc.”</p>
+</blockquote>
+<h3 id="tweet-tokens-visualisation"><span class="header-section-number">1.2.1</span> Tweet Tokens Visualisation</h3>
+<p>通过对正负类中对应词频从高到低的排列，可以每类中词频的大致分布，当然可能包含一 些词在每一类中的词频都较高，因此这些tokens对分类没有太大的帮助。通过使用 <code>seaborn</code> 的 <code>regplot</code> 以坐标轴分别为词在正负类中的词频数可以将tokens的分布可视化 出来。</p>
+<p>这里为了找出有利于区分两类的token，引入了 <code>pos_rate</code> ，但是该值找出的值大多整体 词频较低，因此从类别内词频占比的角度引入了 <code>pos_freq_pct</code> ：</p>
+<blockquote>
+<p>Intuitively, if a word appears more often in one class compared to another, this can be a good measure of how much the word is meaningful to characterise the class. In the below code I named it as ‘pos’, and as you can see from the calculation of the code, this is defined as <span class="math inline">\(pos_rate=\frac{positive frequency}{positive frequency + negative frequency}\)</span> Another metric is the frequency a word occurs in the class. This is defined as <span class="math inline">\(pos_freq_pct=\frac{positive frequency}{\sum{positive frequency}}\)</span></p>
+</blockquote>
+<p>在求得 <code>pos_rate</code> 和 <code>pos_freq_pct</code> 之后，由于两者的具体数值差距较大，因此需要使用 调和平均将两者的值进行平均： [H=] 由于从该值中也没有看出有效的信息，从新计算了 <code>pos_rate</code> 和 <code>pos_freq_pct</code> 的 CDF(Cumulative Distribution Function)，从 <code>pos_rate_normcdf</code> vs. <code>neg_rate_normcdf</code> 中得出了一些有趣的区别。</p>
+<p>由于使用 <code>seaborn</code> 无法创建出可交互的图，使用 <code>bokeh</code> 来对结果进行绘制：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1">    <span class="im">from</span> bokeh.plotting <span class="im">import</span> figure</a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="im">from</span> bokeh.io <span class="im">import</span> output_notebook, show</a>
+<a class="sourceLine" id="cb2-3" title="3">    <span class="im">from</span> bokeh.models <span class="im">import</span> LinearColorMapper</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="im">from</span> bokeh.models <span class="im">import</span> HoverTool</a>
+<a class="sourceLine" id="cb2-5" title="5"></a>
+<a class="sourceLine" id="cb2-6" title="6">    output_notebook()</a>
+<a class="sourceLine" id="cb2-7" title="7">    color_mapper <span class="op">=</span> LinearColorMapper(palette<span class="op">=</span><span class="st">&#39;Inferno256&#39;</span>, low<span class="op">=</span><span class="bu">min</span>(term_freq_df2.pos_normcdf_hmean), high<span class="op">=</span><span class="bu">max</span>(term_freq_df2.pos_normcdf_hmean))</a>
+<a class="sourceLine" id="cb2-8" title="8"></a>
+<a class="sourceLine" id="cb2-9" title="9">    p <span class="op">=</span> figure(x_axis_label<span class="op">=</span><span class="st">&#39;neg_normcdf_hmean&#39;</span>, y_axis_label<span class="op">=</span><span class="st">&#39;pos_normcdf_hmean&#39;</span>)</a>
+<a class="sourceLine" id="cb2-10" title="10"></a>
+<a class="sourceLine" id="cb2-11" title="11">    p.circle(<span class="st">&#39;neg_normcdf_hmean&#39;</span>,<span class="st">&#39;pos_normcdf_hmean&#39;</span>,size<span class="op">=</span><span class="dv">5</span>,alpha<span class="op">=</span><span class="fl">0.3</span>,source<span class="op">=</span>term_freq_df2,color<span class="op">=</span>{<span class="st">&#39;field&#39;</span>: <span class="st">&#39;pos_normcdf_hmean&#39;</span>, <span class="st">&#39;transform&#39;</span>: color_mapper})</a>
+<a class="sourceLine" id="cb2-12" title="12"></a>
+<a class="sourceLine" id="cb2-13" title="13">    hover <span class="op">=</span> HoverTool(tooltips<span class="op">=</span>[(<span class="st">&#39;token&#39;</span>,<span class="st">&#39;@index&#39;</span>)])</a>
+<a class="sourceLine" id="cb2-14" title="14">    p.add_tools(hover)</a>
+<a class="sourceLine" id="cb2-15" title="15">    show(p)</a></code></pre></div>
+<h2 id="建模"><span class="header-section-number">1.3</span> 建模</h2>
+<h3 id="feature-selection"><span class="header-section-number">1.3.1</span> Feature Selection</h3>
+<ul>
+<li>Chi2</li>
+<li>PCA</li>
+</ul>
+<p>example</p>
+<p><img src="https://4.bp.blogspot.com/-pleL0HvLUgU/UYqpNFdd8EI/AAAAAAAAAHA/uf11u9lcq5g/s1600/PCA_1.png" /> 图片来自： <a href="https://mengnote.blogspot.com/2013/05/an-intuitive-explanation-of-pca.html">An intuitive explanation of PCA (Principal Component Analysis)</a></p>
+<h3 id="模型"><span class="header-section-number">1.3.2</span> 模型</h3>
+<ol type="1">
+<li><p>传统模型</p>
+<p>将数据集以98/1/1的比例划分为了训练集/验证集/测试集，划分的比例主要考虑数据量的 大小，1%的测试及验证集比例足够了。没有使用训练集/测试集+k折的方式也主要是考虑 到数据量（数据量较多），如果使用k折较为耗时。</p>
+<p><em>使用了两次 <code>train_test_split</code> 来划分训练集/验证集/测试集</em></p>
+<p>文章中使用的特征提取方式：</p>
+<ul>
+<li>基线：使用Textblob自带的情感分析功能最为基线进行对比。</li>
+<li>Bag-of-words：使用了Bag-of-words方式建立了特征，并使用LR验证停用词的影响（选 择LR的原因是计算速度相对较快，在确定停用词的影响后会选用其他模型）。同时还验 证了不同停用词之间、不同ngram之间的效果、不同特征数之间的效果。</li>
+<li>TFIDF</li>
+</ul>
+<p>最终效果是TFIDF效果较好。</p></li>
+<li><p>ensemble</p>
+<p>对一系列模型进行了对比，选择了效果最好的5个模型，然后使用 <code>sklearn.ensemble.VotingClassifier</code> 进行ensemble。</p></li>
+<li><p>基于字典的方式</p>
+<blockquote>
+<p>In the lexical approach the definition of sentiment is based on the analysis of individual words and/or phrases; emotional dictionaries are often used: emotional lexical items from the dictionary are searched in the text, their sentiment weights are calculated, and some aggregated weight function is applied.</p>
+</blockquote>
+<p>统计出每句话中所有的词，然后使用前面计算出的 <code>pos_rate_normcdf</code> 和 <code>neg_rate_normcdf</code> 计算整句的平均 <code>normcdf</code> ，如果没有出现在词典中，则 <strong>在0和1之间随机赋值作为最终结果</strong></p></li>
+<li><p>Doc2vec</p>
+<p>对比了5中Doc2vec方式：</p>
+<ol type="1">
+<li>DBOW (Distributed Bag of Words)</li>
+<li>DMC (Distributed Memory Concatenated)</li>
+<li>DMM (Distributed Memory Mean)</li>
+<li>DBOW + DMC</li>
+<li>DBOW + DMM</li>
+</ol>
+<p>由于Doc2vec是无监督的，因此训练时使用了所有的数据集进行训练。</p></li>
+<li><p>Phrase Modelling</p>
+<blockquote>
+<p>Another thing that can be implemented with Gensim library is phrase detection. It is similar to n-gram, but instead of getting all the n-gram by sliding the window, it detects frequently used phrases and stick them together.</p>
+<p>This has been introduced by Mikolov et. al (2013), and it is proposed to learn vector representation for phrases, which have a meaning that is not a simple composition of the meanings of its individual words. “This way, we can form many reasonable phrases without greatly increasing the size of the vocabulary.”</p>
+<p>Below formula expresses phrase modelling in a nutshell： <span class="math inline">\(\frac{count(AB)-count_{min}}{count(A)×count(B)}×N{\gt}threshold\)</span></p>
+<ul>
+<li><code>count_{min}</code> is a user-defined parameter to ensure that accepted phrases occur a minimum number of times (default value in Gensim’s Phrases function is 5)</li>
+<li><code>threshold</code> is a user-defined parameter to control how strong of a relationship between two tokens the model requires before accepting them as a phrase (default threshold used in Gensim’s Phrases function is 10.0)</li>
+</ul>
+</blockquote></li>
+<li><p>ANN with TFIDF</p>
+<p>由于一直都是LR效果较好，因此在考虑NN时首先考虑ANN，但是在训练时模型在训练集上的 准确率一直大于验证集上的准确率（8%的差距），因此先后尝试了以下方式优化：</p>
+<ul>
+<li>Dropout</li>
+<li>Shuffling：即每轮训练时将样本输入的顺序打乱；</li>
+<li>调整Learning rate；</li>
+<li>增加隐层的节点数；</li>
+</ul></li>
+<li><p>NN with Doc2Vec/Word2Vec/GloVe</p>
+<p>由于在训练过程中需要不断的对比不同节点数的模型以及不同隐层数（1-3）的模型， 使用了 <code>keras.callbacks.{ModelCheckpoint, EarlyStopping}</code> 来对训练过程中的最优模 型进行保存，并检测验证集准确率，如果epoch5步之内不会变得更好，则停止。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" title="1">    <span class="im">from</span> keras.callbacks <span class="im">import</span> ModelCheckpoint, EarlyStopping</a>
+<a class="sourceLine" id="cb3-2" title="2"></a>
+<a class="sourceLine" id="cb3-3" title="3">    filepath<span class="op">=</span><span class="st">&quot;d2v_09_best_weights.</span><span class="sc">{epoch:02d}</span><span class="st">-</span><span class="sc">{val_acc:.4f}</span><span class="st">.hdf5&quot;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">    checkpoint <span class="op">=</span> ModelCheckpoint(filepath, monitor<span class="op">=</span><span class="st">&#39;val_acc&#39;</span>, verbose<span class="op">=</span><span class="dv">1</span>, save_best_only<span class="op">=</span><span class="va">True</span>, mode<span class="op">=</span><span class="st">&#39;max&#39;</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">    early_stop <span class="op">=</span> EarlyStopping(monitor<span class="op">=</span><span class="st">&#39;val_acc&#39;</span>, patience<span class="op">=</span><span class="dv">5</span>, mode<span class="op">=</span><span class="st">&#39;max&#39;</span>) </a>
+<a class="sourceLine" id="cb3-6" title="6">    callbacks_list <span class="op">=</span> [checkpoint, early_stop]</a>
+<a class="sourceLine" id="cb3-7" title="7">    np.random.seed(seed)</a>
+<a class="sourceLine" id="cb3-8" title="8">    model_d2v_09_es <span class="op">=</span> Sequential()</a>
+<a class="sourceLine" id="cb3-9" title="9">    model_d2v_09_es.add(Dense(<span class="dv">256</span>, activation<span class="op">=</span><span class="st">&#39;relu&#39;</span>, input_dim<span class="op">=</span><span class="dv">200</span>))</a>
+<a class="sourceLine" id="cb3-10" title="10">    model_d2v_09_es.add(Dense(<span class="dv">256</span>, activation<span class="op">=</span><span class="st">&#39;relu&#39;</span>))</a>
+<a class="sourceLine" id="cb3-11" title="11">    model_d2v_09_es.add(Dense(<span class="dv">256</span>, activation<span class="op">=</span><span class="st">&#39;relu&#39;</span>))</a>
+<a class="sourceLine" id="cb3-12" title="12">    model_d2v_09_es.add(Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">&#39;sigmoid&#39;</span>))</a>
+<a class="sourceLine" id="cb3-13" title="13">    model_d2v_09_es.<span class="bu">compile</span>(optimizer<span class="op">=</span><span class="st">&#39;adam&#39;</span>,</a>
+<a class="sourceLine" id="cb3-14" title="14">                  loss<span class="op">=</span><span class="st">&#39;binary_crossentropy&#39;</span>,</a>
+<a class="sourceLine" id="cb3-15" title="15">                  metrics<span class="op">=</span>[<span class="st">&#39;accuracy&#39;</span>])</a>
+<a class="sourceLine" id="cb3-16" title="16"></a>
+<a class="sourceLine" id="cb3-17" title="17">    model_d2v_09_es.fit(train_vecs_ugdbow_tgdmm, y_train,</a>
+<a class="sourceLine" id="cb3-18" title="18">                        validation_data<span class="op">=</span>(validation_vecs_ugdbow_tgdmm, y_validation), </a>
+<a class="sourceLine" id="cb3-19" title="19">    epochs<span class="op">=</span><span class="dv">100</span>, batch_size<span class="op">=</span><span class="dv">32</span>, verbose<span class="op">=</span><span class="dv">2</span>, callbacks<span class="op">=</span>callbacks_list)</a></code></pre></div>
+<p>在Doc2Vec无法获得比LR更好的性能后，作者转向了Word2Vec，分别尝试了：</p>
+<ul>
+<li>Word vectors extracted from Doc2Vec models (Average/Sum)</li>
+<li>Word vectors extracted from Doc2Vec models with TFIDF weighting (Average/Sum)</li>
+<li>Word vectors extracted from Doc2Vec models with custom weighting (Average/Sum)， 这其中的“Custom weighting”其实就是前面计算出的=posnormcdfhmean=；</li>
+<li>Word vectors extracted from pre-trained GloVe (Average/Sum)</li>
+<li>Word vectors extracted from pre-trained Google News Word2Vec (Average/Sum)</li>
+<li>Separately trained Word2Vec (Average/Sum)</li>
+<li>Separately trained Word2Vec with custom weighting (Average/Sum)</li>
+</ul></li>
+<li><p>CNN with Word2Vec</p>
+<p>分别使用CBOW和skip-gram的Word2Vec训练，并将两者的结果拼接作为一个词的嵌入，然后 对语料进行Tokenize，并将Tokenize后的词列表进行 <code>texts_to_sequences</code> 转换，转换为 词的index后做padding，最后使用Word2Vec向量将词列表的index序列转换为矩阵 <code>embedding_matrix</code> 输入至CNN中。</p>
+<p>对比了三种Embedding Layers：</p>
+<ul>
+<li>“Pre-defined embedding”: <code>Embedding(100000, 200, weights=[embedding_matrix], input_length=45, trainable=False)</code></li>
+<li>“Embedding layer itself can learn word embeddings as the whole model trains”: <code>Embedding(100000, 200, input_length=45)</code></li>
+<li>“Feed the pre-defined embedding but make it trainable”: <code>Embedding(100000, 200, weights=[embedding_matrix], input_length=45, trainable=True)</code></li>
+</ul>
+<p>在CNN结构中，将滑窗设置为 <code>embedding_matrix</code> 的宽度大小，这样相当于同时进行了常规 意义的ngram，最终输出的1维序列在输入至一个Dense层。</p></li>
+</ol>
+</body>
+</html>
