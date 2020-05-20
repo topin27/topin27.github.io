@@ -22,6 +22,15 @@ table td {
     border-right: none;
 }
 
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+figcaption {
+    text-align: center;
+}
 
 /* Add border for the last row of the table.           */
 /*      (Might be of use for table footnotes, later).  */
